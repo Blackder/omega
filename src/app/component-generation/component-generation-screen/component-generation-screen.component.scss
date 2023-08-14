@@ -1,0 +1,10 @@
+.row {
+  align-items: stretch;
+  gap: 2rem;
+  app-component-list {
+    flex: 1 0 25rem;
+  }
+  app-component-generation-panel {
+    flex: 2 0 40rem;
+  }
+}

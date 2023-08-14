@@ -1,0 +1,35 @@
+.component-list {
+  max-height: 95vh;
+  overflow-y: scroll;
+  margin: 0;
+}
+.component {
+  list-style-type: none;
+  padding: 1rem;
+  border: 1px solid black;
+  border-radius: 5px;
+  position: relative;
+  cursor: pointer;
+  height: fit-content !important;
+  background-color: white;
+  &::before {
+    content: "";
+    opacity: 0;
+    display: block;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    box-shadow: 1px 1px 5px 1px black;
+    transition: 0.5s ease-out;
+  }
+  &:hover {
+    &::before {
+      opacity: 1;
+    }
+  }
+  &:not(:last-child) {
+    margin-bottom: 1rem;
+  }
+}

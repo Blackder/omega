@@ -1,0 +1,12 @@
+.gitignore
+README.md
+api.module.ts
+clients/api.ts
+clients/componentGeneration.service.ts
+configuration.ts
+encoder.ts
+git_push.sh
+index.ts
+models/models.ts
+param.ts
+variables.ts

@@ -1,0 +1,8 @@
+.component-generation-panel {
+    height: 95vh;
+    border: 1px solid black;
+    padding: 0.5rem;
+    app-container:not(:last-child) {
+        margin-bottom: 1rem;
+    }
+}
