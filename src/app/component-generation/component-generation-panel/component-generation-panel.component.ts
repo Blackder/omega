@@ -1,8 +1,8 @@
-import { Component, ViewChild, ViewContainerRef } from '@angular/core';
-import { insertComponent } from 'src/app/mixins/mixins';
+import { Component, ViewChild } from '@angular/core';
+import { dropComponent } from 'src/app/mixins/mixins';
 import { ComponentResolver } from 'src/app/services/component-resolver.service';
 import { ContainerHostDirective } from '../container/container-host.directive';
-import { DndDropEvent } from 'ngx-drag-drop';
+import { DropData } from 'src/app/directives/drag-drop/drop-zone.directive';
 
 @Component({
   selector: 'app-component-generation-panel',
@@ -10,19 +10,15 @@ import { DndDropEvent } from 'ngx-drag-drop';
   styleUrls: ['./component-generation-panel.component.scss'],
 })
 export class ComponentGenerationPanelComponent {
-  @ViewChild(ContainerHostDirective, { static: true }) containerHost!: ContainerHostDirective;
+  @ViewChild(ContainerHostDirective, { static: true })
+  containerHost!: ContainerHostDirective;
+  constructor(private componentResolver: ComponentResolver) {}
 
-  constructor(
-    private viewContainerRef: ViewContainerRef,
-    private componentResolver: ComponentResolver
-  ) {}
-
-  onComponentDropped(event: DndDropEvent): void {
-    insertComponent(
+  onComponentDropped(dropData: DropData): void {
+    dropComponent(
+      dropData,
       this.containerHost.viewContainerRef,
-      this.componentResolver,
-      event.data,
-      event.data
+      this.componentResolver
     );
   }
 }

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { tap } from 'rxjs';
+import { DragEffect } from 'src/app/directives/drag-drop/drag-drop.enum';
 import { ComponentGenerationService } from 'src/app/services/api/clients/componentGeneration.service';
 
 @Component({
@@ -9,6 +10,7 @@ import { ComponentGenerationService } from 'src/app/services/api/clients/compone
 })
 export class ComponentListComponent implements OnInit {
   components: string[] = [];
+  copyEffect = DragEffect.copy;
 
   constructor(private componentGenerationService: ComponentGenerationService) {}
 

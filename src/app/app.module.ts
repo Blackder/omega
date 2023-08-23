@@ -20,10 +20,12 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     ComponentGenerationScreenModule,
     BrowserAnimationsModule,
   ],
-  providers: [ {
-    provide: BASE_PATH,
-    useValue: environment.apiBasePath
-  }],
+  providers: [
+    {
+      provide: BASE_PATH,
+      useValue: environment.apiBasePath,
+    },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

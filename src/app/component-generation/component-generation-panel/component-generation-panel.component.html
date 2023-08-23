@@ -1,7 +1,9 @@
-<div
-  class="component-generation-panel"
-  dndDropzone
-  (dndDrop)="onComponentDropped($event)"
->
-  <ng-template appContainerHost></ng-template>
+<div class="component-generation-panel">
+  <div class="drop-zone" appDropZone (dropped)="onComponentDropped($event)">
+    <ng-template appContainerHost></ng-template>
+    <div appDropPlaceholder>
+      <div class="drop-placeholder">Drop here</div>
+    </div>
+  </div>
 </div>
+<button mat-raised-button color="primary">Generate component</button>

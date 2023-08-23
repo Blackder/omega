@@ -3,7 +3,9 @@
     class="component"
     *ngFor="let component of components"
     cdkDrag
-    [dndDraggable]="component"
+    appDraggable
+    [dragData]="component"
+    [dragEffect]="copyEffect"
   >
     {{ component }}
   </li>

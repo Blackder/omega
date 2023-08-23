@@ -1,8 +1,17 @@
-import { Component, Input, ViewChild, ViewEncapsulation } from '@angular/core';
-import { insertComponent } from 'src/app/mixins/mixins';
+import {
+  Component,
+  ElementRef,
+  Input,
+  ViewChild,
+  ViewContainerRef,
+  ViewEncapsulation,
+  ViewRef,
+} from '@angular/core';
+import { dropComponent } from 'src/app/mixins/mixins';
 import { ComponentResolver } from 'src/app/services/component-resolver.service';
 import { ContainerHostDirective } from './container-host.directive';
-import { DndDropEvent } from 'ngx-drag-drop';
+import { DropData } from 'src/app/directives/drag-drop/drop-zone.directive';
+import { DragEffect } from 'src/app/directives/drag-drop/drag-drop.enum';
 
 @Component({
   selector: 'app-container',
@@ -14,15 +23,26 @@ export class ContainerComponent {
   @ViewChild(ContainerHostDirective, { static: true })
   containerHost!: ContainerHostDirective;
   @Input() data!: any;
+  @Input() parentContainerRef!: ViewContainerRef;
+  @Input() hostView!: ViewRef;
+  moveEffect = DragEffect.move;
 
-  constructor(private componentResolver: ComponentResolver) {}
+  constructor(
+    private componentResolver: ComponentResolver,
+    public elementRef: ElementRef<HTMLElement>
+  ) {}
 
-  onDropped(event: DndDropEvent): void {
-    insertComponent(
+  onDropped(dropData: DropData): void {
+    dropComponent(
+      dropData,
       this.containerHost.viewContainerRef,
-      this.componentResolver,
-      event.data,
-      event.data
+      this.componentResolver
+    );
+  }
+
+  remove(): void {
+    this.parentContainerRef.remove(
+      this.parentContainerRef.indexOf(this.hostView)
     );
   }
 }

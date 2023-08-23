@@ -5,3 +5,14 @@
 }
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+.drop-zone {
+    min-height: 3rem;
+    height: 100%;
+    overflow-y: auto;
+}
+.drop-placeholder {
+    border: 0.5rem dashed purple;
+    color: purple;
+    font-size: 1.5em;
+    padding: 1rem;
+}
