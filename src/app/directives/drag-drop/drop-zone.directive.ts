@@ -13,18 +13,23 @@ import { DragDropService } from './drag-drop.service';
 import { DragEffect } from './drag-drop.enum';
 import { DraggableComponent } from './draggable.directive';
 import { DropPlaceholderDirective } from './drop-placeholder.directive';
+import { ComponentProperty } from 'src/app/component-generation/component-property/component.property';
 
-export interface DropData {
+export interface DropData<
+  TBuildingBlock extends ComponentProperty<TBuildingBlock>
+> {
   data: any;
   index: number;
   dragEffect: DragEffect;
-  component: DraggableComponent;
+  component: DraggableComponent<TBuildingBlock>;
 }
 
 @Directive({
   selector: '[appDropZone]',
 })
-export class DropZoneDirective implements AfterViewInit, OnDestroy {
+export class DropZoneDirective<
+TBuildingBlock extends ComponentProperty<TBuildingBlock>
+> implements AfterViewInit, OnDestroy {
   private minOffsetY = -1;
   private maxOffsetY = -1;
   private placeholderIndex = -1;
@@ -36,12 +41,12 @@ export class DropZoneDirective implements AfterViewInit, OnDestroy {
   @ContentChild(DropPlaceholderDirective)
   placeholderDirective?: DropPlaceholderDirective;
 
-  @Output() dropped = new EventEmitter<DropData>();
+  @Output() dropped = new EventEmitter<DropData<TBuildingBlock>>();
 
   constructor(
     private elementRef: ElementRef<HTMLElement>,
     private ngZone: NgZone,
-    private dragDropService: DragDropService,
+    private dragDropService: DragDropService<TBuildingBlock>,
     private renderer: Renderer2
   ) {}
 

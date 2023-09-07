@@ -8,19 +8,37 @@ import { BuildingBlockComponent } from '../component-generation/building-block.c
 export class Container<
   TBuildingBlock extends ComponentProperty<TBuildingBlock>
 > {
-  private children: BuildingBlockComponent<TBuildingBlock>[] = [];
-  constructor(private viewContainerRef: ViewContainerRef) {}
+  public children: BuildingBlockComponent<TBuildingBlock>[] = [];
+  constructor(public viewContainerRef: ViewContainerRef) {}
 
-  insert(index: number, componentType: Type<unknown>): ComponentRef<unknown> {
+  insert(componentType: Type<unknown>, index?: number): ComponentRef<unknown> {
     const componentRef = this.viewContainerRef.createComponent(componentType, {
       index,
     });
-    this.children.splice(
-      index,
-      0,
-      componentRef.instance as BuildingBlockComponent<TBuildingBlock>
-    );
+    if (index) {
+      this.children.splice(
+        index,
+        0,
+        componentRef.instance as BuildingBlockComponent<TBuildingBlock>
+      );
+    } else {
+      this.children.push(
+        componentRef.instance as BuildingBlockComponent<TBuildingBlock>
+      );
+    }
+
     return componentRef;
+  }
+
+  move(
+    toIndex: number,
+    toMove: {
+      viewRef: ViewRef;
+      component: BuildingBlockComponent<TBuildingBlock>;
+    }
+  ): void {
+    this.viewContainerRef.move(toMove.viewRef, toIndex);
+    this.children.splice(toIndex, 0, toMove.component);
   }
 
   remove(hostView: ViewRef): {
@@ -38,24 +56,24 @@ export class Container<
   }
 }
 
-export function dropComponent(
-  dropData: DropData,
-  viewContainerRef: ViewContainerRef,
+export function dropComponent<
+  TBuildingBlock extends ComponentProperty<TBuildingBlock>
+>(
+  dropData: DropData<TBuildingBlock>,
+  container: Container<TBuildingBlock>,
   componentResolver: ComponentResolver,
   framework: string
 ) {
   if (dropData.dragEffect == DragEffect.move) {
-    const viewRef = dropData.component.parentContainerRef?.detach(
-      dropData.component.parentContainerRef.indexOf(
-        dropData.component.hostView as ViewRef
-      )
-    ) as ViewRef;
-    viewContainerRef.move(viewRef, dropData.index);
-    dropData.component.parentContainerRef = viewContainerRef;
-    dropData.component.hostView = viewRef;
+    const removed = dropData.component.parentContainer!.remove(
+      dropData.component.hostView as ViewRef
+    );
+    container.move(dropData.index, removed);
+    dropData.component.parentContainer = container;
+    dropData.component.hostView = removed.viewRef;
   } else {
     insertComponent(
-      viewContainerRef,
+      container,
       componentResolver,
       dropData.data,
       dropData.data,
@@ -65,20 +83,22 @@ export function dropComponent(
   }
 }
 
-function insertComponent(
-  viewContainerRef: ViewContainerRef,
+function insertComponent<
+  TBuildingBlock extends ComponentProperty<TBuildingBlock>
+>(
+  container: Container<TBuildingBlock>,
   componentResolver: ComponentResolver,
   componentName: string,
   data: any,
   framework: string,
   atIndex?: number
 ): void {
-  const componentRef = viewContainerRef.createComponent(
+  const componentRef = container.insert(
     componentResolver.resolve(componentName),
-    { index: atIndex }
+    atIndex
   );
   componentRef.setInput('data', data);
-  componentRef.setInput('parentContainerRef', viewContainerRef);
+  componentRef.setInput('parentContainer', container);
   componentRef.setInput('hostView', componentRef.hostView);
   componentRef.setInput('framework', framework);
 }

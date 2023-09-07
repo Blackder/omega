@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   Component,
   ContentChildren,
   Input,
@@ -7,7 +8,7 @@ import {
   ViewChild,
   ViewChildren,
 } from '@angular/core';
-import { dropComponent } from 'src/app/mixins/mixins';
+import { Container, dropComponent } from 'src/app/mixins/mixins';
 import { ComponentResolver } from 'src/app/services/component-resolver.service';
 import { ContainerHostDirective } from '../container/container-host.directive';
 import { DropData } from 'src/app/directives/drag-drop/drop-zone.directive';
@@ -27,7 +28,7 @@ import { FormGroup } from '@angular/forms';
 })
 export class ComponentGenerationPanelComponent<
   TBuildingBlock extends ComponentProperty<TBuildingBlock>
-> implements OnInit, Selectable
+> implements OnInit, AfterViewInit, Selectable
 {
   @Input() framework!: string;
 
@@ -42,6 +43,7 @@ export class ComponentGenerationPanelComponent<
   property?: ComponentProperty<TBuildingBlock>;
   selected: boolean = true;
   formGroup!: FormGroup;
+  private container!: Container<TBuildingBlock>;
 
   constructor(
     private componentResolver: ComponentResolver,
@@ -64,10 +66,14 @@ export class ComponentGenerationPanelComponent<
     this.componentPropertyService.onComponentSelected(this.id, this);
   }
 
-  onComponentDropped(dropData: DropData): void {
+  ngAfterViewInit(): void {
+    this.container = new Container(this.containerHost.viewContainerRef);
+  }
+
+  onComponentDropped(dropData: DropData<TBuildingBlock>): void {
     dropComponent(
       dropData,
-      this.containerHost.viewContainerRef,
+      this.container,
       this.componentResolver,
       this.framework
     );
@@ -90,8 +96,9 @@ export class ComponentGenerationPanelComponent<
 
     this.property?.copyFrom(formGroup.value);
     this.property?.setChildren(
-      this.children.map((c) => c.getProperty() as TBuildingBlock)
+      this.container.children.map((c) => c.getProperty() as TBuildingBlock)
     );
+    console.log(this.property);
     this.componentGenerationService.generateAngularComponent(this.property);
   }
 }

@@ -29,9 +29,6 @@ export abstract class BuildingBlockComponent<
     this.property.copyFrom(
       this.componentPropertyService.getComponentPropertyFormGroup(this.id).value
     );
-    this.property.setChildren(
-      this.children?.map((c) => c.getProperty() as TBuildingBlock)
-    );
     return this.property;
   }
 }

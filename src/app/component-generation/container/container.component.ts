@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   Component,
   ElementRef,
   Input,
@@ -9,7 +10,7 @@ import {
   ViewRef,
   forwardRef,
 } from '@angular/core';
-import { dropComponent } from 'src/app/mixins/mixins';
+import { Container, dropComponent } from 'src/app/mixins/mixins';
 import { ComponentResolver } from 'src/app/services/component-resolver.service';
 import { ContainerHostDirective } from './container-host.directive';
 import { DropData } from 'src/app/directives/drag-drop/drop-zone.directive';
@@ -20,6 +21,7 @@ import { ComponentPropertyFactory } from '../component-property/component-proper
 import { v4 } from 'uuid';
 import { ComponentPropertyService } from '../component-generation-tab/component-property.service';
 import { Selectable } from '../selectable';
+import { DraggableComponent } from 'src/app/directives/drag-drop/draggable.directive';
 
 @Component({
   selector: 'app-container',
@@ -37,16 +39,22 @@ export class ContainerComponent<
     TBuildingBlock extends ComponentProperty<TBuildingBlock>
   >
   extends BuildingBlockComponent<TBuildingBlock>
-  implements OnInit, Selectable
+  implements
+    OnInit,
+    AfterViewInit,
+    DraggableComponent<TBuildingBlock>,
+    Selectable
 {
   @ViewChild(ContainerHostDirective, { static: true })
   containerHost!: ContainerHostDirective;
   @Input() data!: any;
-  @Input() parentContainerRef!: ViewContainerRef;
+  @Input() parentContainer!: Container<TBuildingBlock>;
   @Input() hostView!: ViewRef;
   @Input() framework!: string;
   moveEffect = DragEffect.move;
   selected: boolean = false;
+
+  private container!: Container<TBuildingBlock>;
 
   constructor(
     private componentResolver: ComponentResolver,
@@ -55,6 +63,10 @@ export class ContainerComponent<
     public elementRef: ElementRef<HTMLElement>
   ) {
     super(componentPropertyService);
+  }
+
+  ngAfterViewInit(): void {
+    this.container = new Container(this.containerHost.viewContainerRef);
   }
 
   override initializeProperty(): ComponentProperty<TBuildingBlock> {
@@ -76,23 +88,31 @@ export class ContainerComponent<
     return property;
   }
 
-  onDropped(dropData: DropData): void {
+  onDropped(dropData: DropData<TBuildingBlock>): void {
     dropComponent(
       dropData,
-      this.containerHost.viewContainerRef,
+      this.container,
       this.componentResolver,
       this.framework
     );
   }
 
   remove(): void {
-    this.parentContainerRef.remove(
-      this.parentContainerRef.indexOf(this.hostView)
-    );
+    this.parentContainer.remove(this.hostView);
   }
 
   select(event: Event): void {
     event.stopPropagation();
     this.componentPropertyService.onComponentSelected(this.id, this);
+  }
+
+  override getProperty(): ComponentProperty<TBuildingBlock> {
+    const property = super.getProperty();
+    
+    property.setChildren(
+      this.container.children.map((c) => c.getProperty() as TBuildingBlock)
+    );
+
+    return property;
   }
 }

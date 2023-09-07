@@ -10,9 +10,13 @@ import {
 } from '@angular/core';
 import { DragDropService } from './drag-drop.service';
 import { DragEffect } from './drag-drop.enum';
+import { Container } from 'src/app/mixins/mixins';
+import { ComponentProperty } from 'src/app/component-generation/component-property/component.property';
 
-export interface DraggableComponent {
-  parentContainerRef?: ViewContainerRef;
+export interface DraggableComponent<
+  TBuildingBlock extends ComponentProperty<TBuildingBlock>
+> {
+  parentContainer?: Container<TBuildingBlock>;
   hostView?: ViewRef;
   elementRef?: ElementRef<HTMLElement>;
 }
@@ -20,15 +24,18 @@ export interface DraggableComponent {
 @Directive({
   selector: '[appDraggable]',
 })
-export class DraggableDirective implements AfterViewInit, OnDestroy {
+export class DraggableDirective<
+  TBuildingBlock extends ComponentProperty<TBuildingBlock>
+> implements AfterViewInit, OnDestroy
+{
   @Input() dragData: any;
   @Input() dragEffect!: DragEffect;
-  @Input() component!: DraggableComponent;
+  @Input() component!: DraggableComponent<TBuildingBlock>;
 
   constructor(
     private elementRef: ElementRef<HTMLElement>,
     private ngZone: NgZone,
-    private dragDropService: DragDropService
+    private dragDropService: DragDropService<TBuildingBlock>
   ) {}
   ngAfterViewInit(): void {
     this.elementRef.nativeElement.setAttribute('draggable', 'true');
