@@ -1,12 +1,18 @@
 <div
   class="component"
+  [class.selected]="selected"
   appDraggable
   [dragData]="data"
   [dragEffect]="moveEffect"
   [component]="this"
+  (click)="select($event)"
 >
   <mat-icon class="close-icon" (click)="remove()">close</mat-icon>
   <h2>{{ data }}</h2>
+  <app-component-property-display
+    [framework]="framework"
+    [componentId]="id"
+  ></app-component-property-display>
   <div class="drop-zone" appDropZone (dropped)="onDropped($event)">
     <ng-template appContainerHost></ng-template>
     <div appDropPlaceholder>

@@ -248,16 +248,24 @@ export class DropZoneDirective implements AfterViewInit, OnDestroy {
   }
 
   private onDrop(event: DragEvent): void {
+    const index = this.movingComponentInSameContainer
+      ? this.placeholderIndex - 1
+      : this.placeholderIndex;
+
     if (event.defaultPrevented || this.placeholderIndex === -1) {
       return;
     }
+
+    if (index === -1) {
+      this.reset();
+      return;
+    }
+
     event.preventDefault();
 
     this.dropped.emit({
       data: this.dragDropService.dragInfo!.data,
-      index: this.movingComponentInSameContainer
-        ? this.placeholderIndex - 1
-        : this.placeholderIndex,
+      index,
       dragEffect: this.dragDropService.dragInfo!.dragEffect,
       component: this.dragDropService.dragInfo!.component,
     });

@@ -1,0 +1,33 @@
+<div [formGroup]="parentFormGroup">
+  <div [formArrayName]="name">
+    <ng-container *ngIf="prototypeItemIsFormGroup; else normalFormControl">
+      <h3>{{ name | capitalize }}</h3>
+      <ng-container
+        *ngFor="let control of controls; let i = index"
+        [formGroupName]="i"
+      >
+        <fieldset>
+          <mat-icon class="remove-button" (click)="remove(i)">close</mat-icon>
+          <h4>{{ name | capitalize | toSingular }} {{ i + 1 }}</h4>
+          <app-form-group [formGroup]="control.asFormGroup"></app-form-group>
+        </fieldset>
+      </ng-container>
+      <button
+        class="add-button"
+        mat-raised-button
+        color="primary"
+        (click)="add()"
+      >
+        Add
+      </button>
+    </ng-container>
+    <ng-template #normalFormControl>
+      <ng-container *ngFor="let control of controls; let i = index">
+        <div class="row">
+          <input matInput [formControlName]="i" />
+          <mat-icon (click)="remove(i)">close</mat-icon>
+        </div>
+      </ng-container>
+    </ng-template>
+  </div>
+</div>

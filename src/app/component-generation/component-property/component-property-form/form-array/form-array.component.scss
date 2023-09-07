@@ -1,0 +1,16 @@
+h3 {
+  font-weight: bold;
+}
+fieldset {
+  margin-bottom: 0.5rem;
+  position: relative;
+  .remove-button {
+    cursor: pointer;
+    position: absolute;
+    top: 1%;
+    right: 1%;
+  }
+}
+.add-button {
+  margin: 0 0 1rem 0;
+}

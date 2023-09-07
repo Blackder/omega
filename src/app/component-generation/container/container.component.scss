@@ -1,18 +1,28 @@
+@import "../../../color.scss";
+
 app-container {
   display: block;
   border: 1px solid black;
   padding: 0.5rem;
   margin: 1rem 0;
+  background-color: white;
   &:not(:last-child) {
     margin-bottom: 2rem;
   }
   .component {
     position: relative;
+    h2 {
+      display: inline-block;
+      margin-right: 2rem;
+    }
     .close-icon {
       position: absolute;
       right: 0;
       top: -5%;
       cursor: pointer;
+    }
+    &.selected {
+      background-color: $selectedColor;
     }
   }
 }

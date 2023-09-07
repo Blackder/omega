@@ -1,0 +1,14 @@
+<ng-container *ngIf="formGroup">
+  <ng-container *ngFor="let control of controls">
+    <ng-container *ngIf="control.isFormArray; else normalFormControl">
+      <app-angular-form-array-display
+        [name]="control.name"
+        [formArray]="control.asFormArray"
+      ></app-angular-form-array-display>
+    </ng-container>
+    <ng-template #normalFormControl>
+      <h3>{{ control.name }}</h3>
+      <p>{{ control.control.value }}</p>
+    </ng-template>
+  </ng-container>
+</ng-container>

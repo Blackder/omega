@@ -1,10 +1,29 @@
-.row {
-  align-items: stretch;
-  gap: 2rem;
-  app-component-list {
-    flex: 1 0 25rem;
+app-component-generation-screen {
+  mat-tab-group {
+    mat-tab-body {
+      padding-top: 1rem;
+      .mat-mdc-tab-body-content {
+        overflow: hidden;
+        .row {
+          align-items: stretch;
+          gap: 2rem;
+          app-component-list {
+            flex: 1 0 5rem;
+          }
+          app-component-generation-panel {
+            flex: 4 0 40rem;
+          }
+          app-component-property {
+            flex: 1 0 10rem;
+          }
+        }
+      }
+    }
   }
-  app-component-generation-panel {
-    flex: 2 0 40rem;
+  .new-component-button {
+    position: absolute;
+    bottom: 1%;
+    right: 1%;
+    z-index: 1;
   }
 }

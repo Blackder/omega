@@ -1,4 +1,22 @@
-<div class="row" cdkDropListGroup>
-    <app-component-list></app-component-list>
-    <app-component-generation-panel></app-component-generation-panel>
-</div>
+<mat-tab-group>
+  <mat-tab label="New component" *ngFor="let tab of tabs">
+    <app-component-generation-tab [tab]="tab"></app-component-generation-tab>
+  </mat-tab>
+</mat-tab-group>
+<button
+  class="new-component-button pulse"
+  mat-fab
+  color="primary"
+  [matMenuTriggerFor]="menu"
+>
+  <mat-icon>add</mat-icon>
+</button>
+<mat-menu #menu="matMenu">
+  <button
+    *ngFor="let framwork of frameworksObservable$ | async"
+    mat-menu-item
+    (click)="addNewTab(framwork)"
+  >
+    {{ framwork }}
+  </button>
+</mat-menu>

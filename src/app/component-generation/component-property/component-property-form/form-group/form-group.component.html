@@ -1,0 +1,30 @@
+<div [formGroup]="formGroup">
+  <ng-container *ngFor="let control of controls">
+    <ng-container *ngIf="control.isFormArray; else normalFormControl">
+      <app-form-array
+        [name]="control.name"
+        [formArray]="control.asFormArray"
+        [parentFormGroup]="formGroup"
+      ></app-form-array>
+    </ng-container>
+    <ng-template #normalFormControl>
+      <mat-form-field>
+        <mat-label>{{ control.name }}</mat-label>
+        <ng-container *ngIf="control.options; else normalInput">
+          <mat-select [formControlName]="control.name">
+            <mat-option *ngFor="let option of control.options" [value]="option">
+              {{ option }}
+            </mat-option>
+          </mat-select>
+        </ng-container>
+        <ng-template #normalInput>
+          <input matInput [formControlName]="control.name" />
+        </ng-template>
+      </mat-form-field>
+      <app-form-error
+        [name]="control.name"
+        [control]="control.control"
+      ></app-form-error>
+    </ng-template>
+  </ng-container>
+</div>

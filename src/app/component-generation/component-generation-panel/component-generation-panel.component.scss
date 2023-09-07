@@ -1,9 +1,18 @@
+@import "../../../color.scss";
+
 .component-generation-panel {
-  height: 87vh;
+  background-color: white;
+  height: 76vh;
   border: 1px solid black;
-  overflow-y: scroll;
+  overflow-y: auto;
   padding: 1rem;
   app-container:not(:last-child) {
     margin-bottom: 1rem;
   }
+  &.selected {
+    background-color: $selectedColor;
+  }
+}
+.generate-component {
+  margin-top: 1rem;
 }

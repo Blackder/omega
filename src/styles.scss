@@ -1,18 +1,57 @@
 /* You can add global styles to this file, and also import other style files */
 .row {
-    display: flex;
-    flex-wrap: wrap;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
 }
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
 .drop-zone {
-    min-height: 3rem;
-    height: 100%;
-    overflow-y: auto;
+  min-height: 3rem;
+  height: 100%;
+  overflow-y: auto;
 }
 .drop-placeholder {
-    border: 0.5rem dashed purple;
-    color: purple;
-    font-size: 1.5em;
-    padding: 1rem;
+  border: 0.5rem dashed purple;
+  color: purple;
+  font-size: 1.5em;
+  padding: 1rem;
+}
+.pulse {
+  animation: pulse 2s ease 0s 1 normal forwards;
+}
+
+@keyframes pulse {
+  0% {
+    animation-timing-function: ease-out;
+    transform: scale(1);
+    transform-origin: center center;
+  }
+
+  10% {
+    animation-timing-function: ease-in;
+    transform: scale(0.91);
+  }
+
+  17% {
+    animation-timing-function: ease-out;
+    transform: scale(0.98);
+  }
+
+  33% {
+    animation-timing-function: ease-in;
+    transform: scale(0.87);
+  }
+
+  45% {
+    animation-timing-function: ease-out;
+    transform: scale(1);
+  }
 }
