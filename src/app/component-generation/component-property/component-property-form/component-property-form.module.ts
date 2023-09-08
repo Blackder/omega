@@ -10,9 +10,15 @@ import { AppPipesModule } from 'src/app/pipes/app-pipes/app-pipes.module';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
+import { FormGroupErrorComponent } from './form-group-error/form-group-error.component';
 
 @NgModule({
-  declarations: [FormGroupComponent, FormArrayComponent, FormErrorComponent],
+  declarations: [
+    FormGroupComponent,
+    FormArrayComponent,
+    FormErrorComponent,
+    FormGroupErrorComponent,
+  ],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -23,6 +29,11 @@ import { MatIconModule } from '@angular/material/icon';
     AppPipesModule,
     MatButtonModule,
   ],
-  exports: [FormGroupComponent, FormArrayComponent],
+  exports: [
+    FormGroupComponent,
+    FormArrayComponent,
+    FormErrorComponent,
+    FormGroupErrorComponent,
+  ],
 })
 export class ComponentPropertyFormModule {}

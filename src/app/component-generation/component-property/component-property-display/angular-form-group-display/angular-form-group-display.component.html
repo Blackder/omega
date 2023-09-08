@@ -7,8 +7,14 @@
       ></app-angular-form-array-display>
     </ng-container>
     <ng-template #normalFormControl>
-      <h3>{{ control.name }}</h3>
-      <p>{{ control.control.value }}</p>
+      <ng-container *ngIf="control.name && control.control.value">
+        <h3>{{ control.name }}=</h3>
+        <p>{{ control.control.value }}</p>
+      </ng-container>
+      <app-form-error
+        [name]="control.name"
+        [control]="control.control"
+      ></app-form-error>
     </ng-template>
   </ng-container>
 </ng-container>

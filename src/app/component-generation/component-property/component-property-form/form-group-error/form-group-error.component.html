@@ -1,0 +1,9 @@
+<ng-container *ngIf="formGroup.touched && !formGroup.valid">
+  <mat-error>{{ name | words }} error(s):</mat-error>
+  <ng-container *ngFor="let control of controls">
+    <app-form-error
+      [name]="control.name"
+      [control]="control.control"
+    ></app-form-error>
+  </ng-container>
+</ng-container>

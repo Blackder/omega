@@ -9,7 +9,7 @@
     </ng-container>
     <ng-template #normalFormControl>
       <mat-form-field>
-        <mat-label>{{ control.name }}</mat-label>
+        <mat-label>{{ control.name | words }}</mat-label>
         <ng-container *ngIf="control.options; else normalInput">
           <mat-select [formControlName]="control.name">
             <mat-option *ngFor="let option of control.options" [value]="option">

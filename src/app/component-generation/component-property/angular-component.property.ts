@@ -45,7 +45,7 @@ export class Binding {
 export class AngularBuildingBlockProperty
   implements ComponentProperty<AngularBuildingBlockProperty>
 {
-  @required()
+  @ignore()
   name?: string;
   attributes?: Attribute[] = [new Attribute()];
 
@@ -70,19 +70,15 @@ export class AngularComponentProperty
 {
   @required()
   componentName?: string = '';
-  attributes?: Attribute[] = [new Attribute()];
   inputs?: Input[] = [new Input()];
   outputs?: Output[] = [new Output()];
-  bindings?: Binding[] = [new Binding()];
   @ignore()
   children?: AngularBuildingBlockProperty[] = [];
 
   copyFrom(value: any): void {
     this.componentName = value.componentName;
-    this.attributes = value.attributes;
     this.inputs = value.inputs;
     this.outputs = value.outputs;
-    this.bindings = value.bindings;
   }
 
   setChildren(children: AngularBuildingBlockProperty[]): void {

@@ -3,6 +3,10 @@
   [class.selected]="selected"
   (click)="select($event)"
 >
+  <app-component-property-display
+    [framework]="framework"
+    [componentId]="id"
+  ></app-component-property-display>
   <div class="drop-zone" appDropZone (dropped)="onComponentDropped($event)">
     <ng-template appContainerHost></ng-template>
     <div appDropPlaceholder>

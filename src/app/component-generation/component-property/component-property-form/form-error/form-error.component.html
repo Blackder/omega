@@ -1,5 +1,5 @@
 <ng-container *ngIf="control.touched">
   <mat-error *ngIf="control.hasError('required')">
-    {{ name }} is required
+    {{ name | words }} is required
   </mat-error>
 </ng-container>

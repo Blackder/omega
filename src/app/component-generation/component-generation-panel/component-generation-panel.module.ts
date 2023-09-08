@@ -7,6 +7,7 @@ import { ContainerModule } from '../container/container.module';
 import { MatButtonModule } from '@angular/material/button';
 import { DragDropModule } from 'src/app/directives/drag-drop/drag-drop.module';
 import { FileDownloadService } from './file-download.service';
+import { ComponentPropertyDisplayModule } from '../component-property/component-property-display/component-property-display.module';
 
 @NgModule({
   declarations: [ComponentGenerationPanelComponent],
@@ -16,6 +17,7 @@ import { FileDownloadService } from './file-download.service';
     ContainerModule,
     MatButtonModule,
     DragDropModule,
+    ComponentPropertyDisplayModule,
   ],
   exports: [ComponentGenerationPanelComponent],
   providers: [ComponentResolver, FileDownloadService],
