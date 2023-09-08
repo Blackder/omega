@@ -14,7 +14,7 @@
   class="generate-component"
   mat-raised-button
   color="primary"
-  [disabled]="!formGroup.valid"
+  [class.shake]="invalidSubmission$ | async"
   (click)="generate()"
 >
   Generate component

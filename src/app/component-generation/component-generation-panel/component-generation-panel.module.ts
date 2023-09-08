@@ -6,6 +6,7 @@ import { ComponentResolver } from 'src/app/services/component-resolver.service';
 import { ContainerModule } from '../container/container.module';
 import { MatButtonModule } from '@angular/material/button';
 import { DragDropModule } from 'src/app/directives/drag-drop/drag-drop.module';
+import { FileDownloadService } from './file-download.service';
 
 @NgModule({
   declarations: [ComponentGenerationPanelComponent],
@@ -17,6 +18,6 @@ import { DragDropModule } from 'src/app/directives/drag-drop/drag-drop.module';
     DragDropModule,
   ],
   exports: [ComponentGenerationPanelComponent],
-  providers: [ComponentResolver],
+  providers: [ComponentResolver, FileDownloadService],
 })
 export class ComponentGenerationPanelModule {}

@@ -4,6 +4,7 @@ import { DropData } from '../directives/drag-drop/drop-zone.directive';
 import { DragEffect } from '../directives/drag-drop/drag-drop.enum';
 import { ComponentProperty } from '../component-generation/component-property/component.property';
 import { BuildingBlockComponent } from '../component-generation/building-block.component';
+import { Observable, map, mapTo, merge, of, switchMap, timer } from 'rxjs';
 
 export class Container<
   TBuildingBlock extends ComponentProperty<TBuildingBlock>
@@ -101,4 +102,27 @@ function insertComponent<
   componentRef.setInput('parentContainer', container);
   componentRef.setInput('hostView', componentRef.hostView);
   componentRef.setInput('framework', framework);
+}
+
+/**
+ * Emits a true value and, after the given displayMs, emits a false value.
+ * Purpose is a quick toggle action, such as a button shaking after a form is
+ * submitted while invalid.
+ */
+export function toggleFor(displayMs: number) {
+  return (source: Observable<any>) =>
+    new Observable<any>((subscriber) => {
+      return source
+        .pipe(
+          map(() => true),
+          switchMap((val) =>
+            merge(of(val), timer(displayMs).pipe(map(() => false)))
+          )
+        )
+        .subscribe({
+          next: (v) => subscriber.next(v),
+          error: (e) => subscriber.error(e),
+          complete: () => subscriber.complete(),
+        });
+    });
 }

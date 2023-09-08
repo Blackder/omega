@@ -1,14 +1,13 @@
 import {
   AfterViewInit,
   Component,
-  ContentChildren,
   Input,
   OnInit,
   QueryList,
   ViewChild,
   ViewChildren,
 } from '@angular/core';
-import { Container, dropComponent } from 'src/app/mixins/mixins';
+import { Container, dropComponent, toggleFor } from 'src/app/mixins/mixins';
 import { ComponentResolver } from 'src/app/services/component-resolver.service';
 import { ContainerHostDirective } from '../container/container-host.directive';
 import { DropData } from 'src/app/directives/drag-drop/drop-zone.directive';
@@ -20,6 +19,8 @@ import { Selectable } from '../selectable';
 import { BuildingBlockComponent } from '../building-block.component';
 import { ComponentGenerationService } from 'src/app/services/api/clients/componentGeneration.service';
 import { FormGroup } from '@angular/forms';
+import { Subject, tap } from 'rxjs';
+import { FileDownloadService } from './file-download.service';
 
 @Component({
   selector: 'app-component-generation-panel',
@@ -44,12 +45,15 @@ export class ComponentGenerationPanelComponent<
   selected: boolean = true;
   formGroup!: FormGroup;
   private container!: Container<TBuildingBlock>;
+  private invalidSubmission = new Subject<boolean>();
+  invalidSubmission$ = this.invalidSubmission.pipe(toggleFor(1000));
 
   constructor(
     private componentResolver: ComponentResolver,
     private componentPropertyFactory: ComponentPropertyFactory,
     private componentPropertyService: ComponentPropertyService,
-    private componentGenerationService: ComponentGenerationService
+    private componentGenerationService: ComponentGenerationService,
+    private fileDownloadService: FileDownloadService
   ) {}
 
   ngOnInit(): void {
@@ -88,7 +92,12 @@ export class ComponentGenerationPanelComponent<
     const formGroup =
       this.componentPropertyService.getComponentPropertyFormGroup(this.id);
 
-    if (!formGroup.valid) {
+    const validChildren = this.container.children.every((c) => c.valid);
+
+    if (!formGroup.valid || !validChildren) {
+      this.invalidSubmission.next(true);
+      formGroup.markAllAsTouched();
+      this.container.children.forEach((c) => c.formGroup.markAllAsTouched());
       throw new Error(
         'Please fix all the errors in the component property configuration before generation!'
       );
@@ -99,6 +108,13 @@ export class ComponentGenerationPanelComponent<
       this.container.children.map((c) => c.getProperty() as TBuildingBlock)
     );
     console.log(this.property);
-    this.componentGenerationService.generateAngularComponent(this.property);
+    this.componentGenerationService
+      .generateAngularComponent(this.property as object, 'response')
+      .pipe(
+        tap((blob) => {
+          this.fileDownloadService.download(blob);
+        })
+      )
+      .subscribe();
   }
 }

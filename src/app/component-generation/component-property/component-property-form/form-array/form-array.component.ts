@@ -7,8 +7,10 @@ import {
   Validators,
 } from '@angular/forms';
 import {
+  getOptions,
   getPrototypeControl as getPrototypeControl,
   isRequired,
+  setOptions,
 } from 'src/app/component-generation/decorators/decorators';
 
 @Component({
@@ -59,6 +61,9 @@ export class FormArrayComponent implements OnInit {
         if (isRequired(asFormGroup.controls[k])) {
           childControl.addValidators([Validators.required]);
         }
+
+        const options = getOptions(asFormGroup.controls[k]);
+        setOptions(childControl, options);
 
         formGroup.addControl(k, childControl);
       });

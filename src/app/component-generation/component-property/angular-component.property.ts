@@ -45,6 +45,8 @@ export class Binding {
 export class AngularBuildingBlockProperty
   implements ComponentProperty<AngularBuildingBlockProperty>
 {
+  @required()
+  name?: string;
   attributes?: Attribute[] = [new Attribute()];
 
   bindings?: Binding[] = [new Binding()];
@@ -53,6 +55,7 @@ export class AngularBuildingBlockProperty
   children?: AngularBuildingBlockProperty[] = [];
 
   copyFrom(value: any): void {
+    this.name = value.name;
     this.attributes = value.attributes;
     this.bindings = value.bindings;
   }

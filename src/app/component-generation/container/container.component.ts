@@ -22,6 +22,7 @@ import { v4 } from 'uuid';
 import { ComponentPropertyService } from '../component-generation-tab/component-property.service';
 import { Selectable } from '../selectable';
 import { DraggableComponent } from 'src/app/directives/drag-drop/draggable.directive';
+import { FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-container',
@@ -39,11 +40,7 @@ export class ContainerComponent<
     TBuildingBlock extends ComponentProperty<TBuildingBlock>
   >
   extends BuildingBlockComponent<TBuildingBlock>
-  implements
-    OnInit,
-    AfterViewInit,
-    DraggableComponent<TBuildingBlock>,
-    Selectable
+  implements OnInit, AfterViewInit, DraggableComponent<TBuildingBlock>
 {
   @ViewChild(ContainerHostDirective, { static: true })
   containerHost!: ContainerHostDirective;
@@ -52,7 +49,6 @@ export class ContainerComponent<
   @Input() hostView!: ViewRef;
   @Input() framework!: string;
   moveEffect = DragEffect.move;
-  selected: boolean = false;
 
   private container!: Container<TBuildingBlock>;
 
@@ -74,18 +70,19 @@ export class ContainerComponent<
       this.framework
     );
 
-    this.componentPropertyService.registerComponentProperty(
-      this.id,
+    return property;
+  }
+
+  override registerComponentProperty(
+    id: string,
+    property: ComponentProperty<TBuildingBlock>
+  ): FormGroup<any> {
+    return this.componentPropertyService.registerComponentProperty(
+      id,
       property,
       this,
       this.data
     );
-
-    setTimeout(() => {
-      this.componentPropertyService.onComponentSelected(this.id, this);
-    });
-
-    return property;
   }
 
   onDropped(dropData: DropData<TBuildingBlock>): void {
@@ -106,9 +103,15 @@ export class ContainerComponent<
     this.componentPropertyService.onComponentSelected(this.id, this);
   }
 
+  protected override getFormGroupValue(): any {
+    const value = super.getFormGroupValue();
+    value.name = this.data;
+    return value;
+  }
+
   override getProperty(): ComponentProperty<TBuildingBlock> {
     const property = super.getProperty();
-    
+
     property.setChildren(
       this.container.children.map((c) => c.getProperty() as TBuildingBlock)
     );
