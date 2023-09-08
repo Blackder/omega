@@ -44,7 +44,7 @@ export class ComponentGenerationPanelComponent<
   property?: ComponentProperty<TBuildingBlock>;
   selected: boolean = true;
   formGroup!: FormGroup;
-  private container!: Container<TBuildingBlock>;
+  container!: Container<TBuildingBlock>;
   private invalidSubmission = new Subject<boolean>();
   invalidSubmission$ = this.invalidSubmission.pipe(toggleFor(1000));
 

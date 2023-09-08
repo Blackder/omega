@@ -3,6 +3,9 @@
   [class.selected]="selected"
   (click)="select($event)"
 >
+  <h2 *ngIf="container && container.children.length === 0">
+    Drag and drop some components here to build your component
+  </h2>
   <app-component-property-display
     [framework]="framework"
     [componentId]="id"

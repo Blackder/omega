@@ -12,6 +12,10 @@
   cursor: pointer;
   height: fit-content !important;
   background-color: white;
+  justify-content: space-between;
+  p , mat-icon {
+    flex: 1 1 1rem;
+  }
   &::before {
     content: "";
     opacity: 0;
