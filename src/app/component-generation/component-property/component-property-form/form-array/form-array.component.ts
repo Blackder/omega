@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import {
   AbstractControl,
   FormArray,
@@ -31,7 +31,10 @@ export class FormArrayComponent implements OnInit {
     isFormGroup: boolean;
   }[];
 
-  constructor(private fb: FormBuilder) {}
+  constructor(
+    private fb: FormBuilder,
+    private changeDetectorRef: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     this.prototypeItem = getPrototypeControl(this.formArray);
@@ -83,6 +86,8 @@ export class FormArrayComponent implements OnInit {
       isFormGroup: this.prototypeItemIsFormGroup,
       asFormGroup: control as FormGroup,
     });
+
+    this.changeDetectorRef.detectChanges();
   }
 
   remove(index: number): void {

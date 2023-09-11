@@ -7,9 +7,10 @@ export class GlobalErrorHandler implements ErrorHandler {
   constructor(private matDialog: MatDialog) {}
 
   handleError(error: any): void {
+    console.error(error);
     this.matDialog.open(ErrorDialogComponent, {
       data: {
-        error,
+        error: error.message,
       },
     });
   }

@@ -8,13 +8,13 @@ app-component-generation-screen {
           align-items: stretch;
           gap: 2rem;
           app-component-list {
-            flex: 1 0 6rem;
+            flex: 1 0 8rem;
           }
           app-component-generation-panel {
             flex: 4 0 40rem;
           }
           app-component-property {
-            flex: 1 0 10rem;
+            flex: 1 0 11rem;
           }
         }
       }

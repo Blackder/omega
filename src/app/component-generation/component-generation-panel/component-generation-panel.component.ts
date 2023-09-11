@@ -1,5 +1,6 @@
 import {
   AfterViewInit,
+  ChangeDetectorRef,
   Component,
   Input,
   OnInit,
@@ -53,7 +54,8 @@ export class ComponentGenerationPanelComponent<
     private componentPropertyFactory: ComponentPropertyFactory,
     private componentPropertyService: ComponentPropertyService,
     private componentGenerationService: ComponentGenerationService,
-    private fileDownloadService: FileDownloadService
+    private fileDownloadService: FileDownloadService,
+    private changeDetectorRef: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -72,6 +74,7 @@ export class ComponentGenerationPanelComponent<
 
   ngAfterViewInit(): void {
     this.container = new Container(this.containerHost.viewContainerRef);
+    this.changeDetectorRef.detectChanges();
   }
 
   onComponentDropped(dropData: DropData<TBuildingBlock>): void {
