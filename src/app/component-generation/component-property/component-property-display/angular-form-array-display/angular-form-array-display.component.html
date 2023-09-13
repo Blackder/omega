@@ -12,12 +12,12 @@
               control.asFormGroup.controls['toValue'].value)
           "
         >
-          <h3>[{{ control.asFormGroup.controls["from"].value }}]=</h3>
+          <h3>[{{ control.asFormGroup.controls["from"].value }}]&nbsp;</h3>
           <p *ngIf="control.asFormGroup.controls['to'].value">
-            "{{ control.asFormGroup.controls["to"].value }}"
+            = "{{ control.asFormGroup.controls["to"].value }}"
           </p>
           <p *ngIf="control.asFormGroup.controls['toValue'].value">
-            "'{{ control.asFormGroup.controls["toValue"].value }}'"
+            = "'{{ control.asFormGroup.controls["toValue"].value }}'"
           </p>
         </ng-container>
         <ng-container
@@ -27,9 +27,9 @@
             control.asFormGroup.controls['to'].value
           "
         >
-          <h3>({{ control.asFormGroup.controls["from"].value }})=</h3>
+          <h3>({{ control.asFormGroup.controls["from"].value }})&nbsp;</h3>
           <p *ngIf="control.asFormGroup.controls['to'].value">
-            "{{ control.asFormGroup.controls["to"].value }}"
+            = "{{ control.asFormGroup.controls["to"].value }}"
           </p>
         </ng-container>
         <ng-container
@@ -39,9 +39,9 @@
             control.asFormGroup.controls['to'].value
           "
         >
-          <h3>[({{ control.asFormGroup.controls["from"].value }})]=</h3>
+          <h3>[({{ control.asFormGroup.controls["from"].value }})]&nbsp;</h3>
           <p *ngIf="control.asFormGroup.controls['to'].value">
-            "{{ control.asFormGroup.controls["to"].value }}"
+            = "{{ control.asFormGroup.controls["to"].value }}"
           </p>
         </ng-container>
         <ng-container
@@ -81,13 +81,11 @@
         </ng-container>
       </ng-container>
       <ng-container *ngSwitchDefault>
-        <ng-container
-          *ngIf="
-            control.asFormGroup.controls['name'].value &&
-            control.asFormGroup.controls['value'].value
-          "
-          ><h3>{{ control.asFormGroup.controls["name"].value }}=</h3>
-          <p>"{{ control.asFormGroup.controls["value"].value }}"</p>
+        <ng-container *ngIf="control.asFormGroup.controls['name'].value"
+          ><h3>{{ control.asFormGroup.controls["name"].value }}&nbsp;</h3>
+        </ng-container>
+        <ng-container *ngIf="control.asFormGroup.controls['value'].value">
+          <p>="{{ control.asFormGroup.controls["value"].value }}"</p>
         </ng-container>
       </ng-container>
     </ng-container>

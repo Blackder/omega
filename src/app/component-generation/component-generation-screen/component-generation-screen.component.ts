@@ -11,7 +11,7 @@ import { ComponentGenerationService } from 'src/app/services/api/clients/compone
 })
 export class ComponentGenerationScreenComponent {
   formGroup: FormGroup;
-  frameworksObservable$: Observable<string>;
+  frameworksObservable$: Observable<string[]>;
   tabs: { framework: string }[] = [];
   selectedIndex?: number;
 

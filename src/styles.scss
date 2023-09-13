@@ -16,7 +16,7 @@ body {
 .drop-zone {
   min-height: 3rem;
   height: 100%;
-  overflow-y: auto;
+  padding: 0.5rem;
 }
 .drop-placeholder {
   border: 0.5rem dashed purple;

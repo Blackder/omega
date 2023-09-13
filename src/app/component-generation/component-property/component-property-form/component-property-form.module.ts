@@ -11,6 +11,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { FormGroupErrorComponent } from './form-group-error/form-group-error.component';
+import {MatCheckboxModule} from '@angular/material/checkbox';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { FormGroupErrorComponent } from './form-group-error/form-group-error.com
     MatSelectModule,
     AppPipesModule,
     MatButtonModule,
+    MatCheckboxModule
   ],
   exports: [
     FormGroupComponent,

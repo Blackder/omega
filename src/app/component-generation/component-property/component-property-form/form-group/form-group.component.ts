@@ -21,6 +21,7 @@ export class FormGroupComponent implements OnInit, OnChanges {
     isFormArray: boolean;
     asFormArray: FormArray;
     options: any[];
+    isCheckbox: boolean;
   }[] = [];
 
   ngOnInit(): void {
@@ -40,6 +41,7 @@ export class FormGroupComponent implements OnInit, OnChanges {
         isFormArray: this.formGroup.controls[k] instanceof FormArray,
         asFormArray: this.formGroup.controls[k] as FormArray,
         options: options,
+        isCheckbox: typeof this.formGroup.controls[k].value === 'boolean',
       };
     });
   }

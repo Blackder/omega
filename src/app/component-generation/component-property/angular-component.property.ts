@@ -17,7 +17,6 @@ export enum BindingType {
 export class Attribute {
   @required()
   name: string = '';
-  @required()
   value: string = '';
 }
 
@@ -36,7 +35,10 @@ export class Output {
 }
 
 @validation({
-  condition: (value) => (value.to && value.toType) || value.toValue,
+  condition: (value) =>
+    value.type === BindingType.event ||
+    (value.to && value.toType) ||
+    value.toValue,
   message:
     'If you provide a field to bind to ("To" value), provide also the type of that field ("To type" value). Otherwise, provide a "To Value"',
 })
@@ -46,7 +48,11 @@ export class Binding {
   type: BindingType = BindingType.property;
   @conditionalRequired((formValue) => formValue.type !== BindingType.innerText)
   from: any = '';
-  @conditionalRequired((formValue) => formValue.type === BindingType.innerText)
+  @conditionalRequired(
+    (formValue) =>
+      formValue.type === BindingType.innerText ||
+      formValue.type === BindingType.event
+  )
   to?: any = '';
   toType?: string = '';
   toValue?: any = '';
@@ -82,6 +88,7 @@ export class AngularComponentProperty
 {
   @required()
   componentName?: string = '';
+  export?: boolean = true;
   inputs?: Input[] = [new Input()];
   outputs?: Output[] = [new Output()];
   @ignore()

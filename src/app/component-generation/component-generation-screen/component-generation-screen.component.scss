@@ -1,4 +1,21 @@
+@import "../../../color.scss";
+
 app-component-generation-screen {
+  .intro {
+    color: $primaryColor;
+    font-size: 2.5em;
+    text-align: center;
+    position: absolute;
+    top: 45%;
+    width: 100%;
+  }
+  img {
+    transform: scale(0.25) scaleX(-1) rotate(139deg);
+    position: absolute;
+    top: 14%;
+    left: 35%;
+    fill: $primaryColor
+  }
   mat-tab-group {
     mat-tab-body {
       padding-top: 1rem;
@@ -22,8 +39,8 @@ app-component-generation-screen {
   }
   .new-component-button {
     position: absolute;
-    bottom: 1%;
-    right: 1%;
+    bottom: 2%;
+    right: 2%;
     z-index: 1;
   }
 }

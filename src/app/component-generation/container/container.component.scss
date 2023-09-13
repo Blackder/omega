@@ -7,10 +7,10 @@ app-container {
   .component {
     position: relative;
     display: block;
-    border: 1px solid black;
     padding: 0.5rem;
     margin: 1rem 0;
     background-color: white;
+    box-shadow: 1px 1px 5px 1px black;
     h2 {
       display: inline-block;
       margin-right: 2rem;
