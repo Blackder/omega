@@ -13,6 +13,7 @@ export class ComponentGenerationScreenComponent {
   formGroup: FormGroup;
   frameworksObservable$: Observable<string>;
   tabs: { framework: string }[] = [];
+  selectedIndex?: number;
 
   constructor(
     componentGenerationService: ComponentGenerationService,
@@ -37,5 +38,6 @@ export class ComponentGenerationScreenComponent {
     this.tabs.push({
       framework: this.formGroup.get('framework')?.value,
     });
+    this.selectedIndex = this.tabs.length - 1;
   }
 }

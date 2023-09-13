@@ -1,5 +1,8 @@
-<mat-tab-group>
-  <mat-tab label="New component" *ngFor="let tab of tabs">
+<mat-tab-group [(selectedIndex)]="selectedIndex">
+  <mat-tab
+    [label]="'New ' + (tab.framework | capitalize) + ' component ' + (i + 1)"
+    *ngFor="let tab of tabs; let i = index"
+  >
     <app-component-generation-tab [tab]="tab"></app-component-generation-tab>
   </mat-tab>
 </mat-tab-group>

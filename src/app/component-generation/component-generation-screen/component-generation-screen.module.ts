@@ -12,6 +12,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 import { ComponentPropertyFactory } from '../component-property/component-property-factory.service';
 import { ComponentGenerationTabModule } from '../component-generation-tab/component-generation-tab.module';
+import { AppPipesModule } from 'src/app/pipes/app-pipes/app-pipes.module';
 
 @NgModule({
   declarations: [ComponentGenerationScreenComponent],
@@ -27,6 +28,7 @@ import { ComponentGenerationTabModule } from '../component-generation-tab/compon
     MatMenuModule,
     MatIconModule,
     ComponentGenerationTabModule,
+    AppPipesModule,
   ],
   providers: [ComponentPropertyFactory],
   exports: [ComponentGenerationScreenComponent],
