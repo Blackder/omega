@@ -4,24 +4,51 @@ import {
   FormArray,
   FormBuilder,
   FormGroup,
+  ValidationErrors,
+  ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil, tap } from 'rxjs';
 import {
+  getValidation,
+  getConditionalRequiredFunction,
   getOptions,
   isRequired,
+  setAsConditionalRequired,
   setOptions,
   setPrototypeControl,
   setRequired,
   shouldIgnore,
+  Validation,
+  setValidation,
 } from '../decorators/decorators';
 import { ComponentProperty } from '../component-property/component.property';
 import { Selectable } from '../selectable';
+import { Destroyable } from 'src/app/mixins/mixins';
 
 export interface ComponentPropertyForm {
   formGroup: FormGroup;
   component: Selectable;
   name: string;
+}
+
+function conditionalRequired(
+  parentForm: FormGroup,
+  condition: (parentFormValue: any) => boolean
+): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    return condition(parentForm.value) && !control.value
+      ? { required: true }
+      : null;
+  };
+}
+
+function validation(validation: Validation): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    return !validation.condition(control.value)
+      ? { failedCondition: validation.message }
+      : null;
+  };
 }
 
 @Injectable()
@@ -41,7 +68,7 @@ export class ComponentPropertyService {
   >(
     componentId: string,
     componentProperty: ComponentProperty<TBuildingBlock>,
-    component: Selectable,
+    component: Selectable & Destroyable,
     name: string
   ): FormGroup {
     if (this.map[componentId]) {
@@ -55,10 +82,15 @@ export class ComponentPropertyService {
         continue;
       }
 
-      const property =
+      const propertyValue =
         componentProperty[key as keyof ComponentProperty<TBuildingBlock>];
 
-      let control = this.getControl(key, property, componentProperty);
+      let control = this.getControl(
+        key,
+        propertyValue,
+        componentProperty,
+        component
+      );
       formGroup.addControl(key, control);
     }
 
@@ -87,49 +119,115 @@ export class ComponentPropertyService {
     return this.map[componentId].formGroup;
   }
 
-  private getControl(key: string, property: any, parent: any): AbstractControl {
+  private getControl(
+    key: string,
+    propertyValue: any,
+    parent: any,
+    component: Destroyable
+  ): AbstractControl {
     let control: AbstractControl;
 
-    if (Array.isArray(property)) {
-      if (property.length === 0) {
+    let parentFormGroup = undefined;
+    if (Array.isArray(propertyValue)) {
+      if (propertyValue.length === 0) {
         throw new Error(
           `You must initialize the array property '${key}' of ${parent.constructor.name} with one item for auto-form-generation by reflection`
         );
       }
       control = this.fb.array([]);
 
-      const member = property[0];
-      const formGroup = this.fb.group({});
+      const member = propertyValue[0];
+
+      parentFormGroup = this.fb.group({});
 
       for (const memberKey in member) {
-        const memberProperty = member[memberKey];
-        const childControl = this.getControl(memberKey, memberProperty, member);
-        formGroup.addControl(memberKey, childControl);
+        const memberPropertyValue = member[memberKey];
+        const childControl = this.getControl(
+          memberKey,
+          memberPropertyValue,
+          member,
+          component
+        );
+        parentFormGroup.addControl(memberKey, childControl);
+        this.setValidationDecoratorForPrototypeControl(
+          childControl,
+          member,
+          memberKey
+        );
       }
 
-      setPrototypeControl(control, formGroup);
+      this.setValidationDecoratorForPrototypeControl(parentFormGroup, member.constructor);
+      setPrototypeControl(control, parentFormGroup);
       // (control as FormArray).push(formGroup);
     } else {
-      control = this.fb.control(property);
+      control = this.fb.control(propertyValue);
       const options = getOptions(parent, key);
       if (options) {
         setOptions(control, options);
       }
-    }
 
-    this.addValidators(parent, key, control);
+      this.addValidators(parent, control, component, parentFormGroup, key);
+    }
 
     return control;
   }
 
-  private addValidators(
-    parent: any,
-    key: string,
-    control: AbstractControl<any, any>
+  private setValidationDecoratorForPrototypeControl(
+    prototypeControl: AbstractControl,
+    target: any,
+    key?: string
+  ): void {
+    if (isRequired(target, key)) {
+      setRequired(prototypeControl);
+    } else {
+      const conditionalRequiredFn = getConditionalRequiredFunction(target, key);
+
+      if (conditionalRequiredFn) {
+        setAsConditionalRequired(prototypeControl, conditionalRequiredFn);
+      }
+
+      const validationConfig = getValidation(target);
+
+      if (validationConfig) {
+        setValidation(prototypeControl, validationConfig);
+      }
+    }
+  }
+
+  addValidators(
+    target: any,
+    control: AbstractControl<any, any>,
+    component: Destroyable,
+    parentFormGroup?: FormGroup,
+    propertyKey?: string
   ) {
-    if (isRequired(parent, key)) {
+    if (isRequired(target, propertyKey)) {
       control.addValidators([Validators.required]);
-      setRequired(control);
+    } else if (parentFormGroup) {
+      const conditionalRequiredFn = getConditionalRequiredFunction(
+        target,
+        propertyKey
+      );
+
+      if (conditionalRequiredFn) {
+        control.addValidators(
+          conditionalRequired(parentFormGroup, conditionalRequiredFn)
+        );
+        parentFormGroup.valueChanges
+          .pipe(
+            takeUntil(component.destroyed$),
+            tap(() => {
+              control.updateValueAndValidity({ emitEvent: false });
+            })
+          )
+          .subscribe();
+      }
+    } else {
+      const validationConfig = getValidation(target);
+
+      if (validationConfig) {
+        control.addValidators(validation(validationConfig));
+      }
     }
   }
 }

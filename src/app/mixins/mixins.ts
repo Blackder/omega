@@ -126,3 +126,7 @@ export function toggleFor(displayMs: number) {
         });
     });
 }
+
+export interface Destroyable {
+  destroyed$: Observable<void>;
+}

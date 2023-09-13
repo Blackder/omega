@@ -22,21 +22,16 @@ export class AngularFormArrayDisplayComponent
   @Input() override name!: string;
   @Input() override formArray!: FormArray;
   BindingType = BindingType;
-  destroyed = new Subject<void>();
 
   override ngOnInit(): void {
     super.ngOnInit();
     this.formArray.valueChanges
       .pipe(
-        takeUntil(this.destroyed),
+        takeUntil(this.destroyed$),
         tap(() => {
           this.updateControls();
         })
       )
       .subscribe();
-  }
-
-  ngOnDestroy(): void {
-    this.destroyed.next();
   }
 }

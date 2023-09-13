@@ -1,4 +1,10 @@
-import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import {
   AbstractControl,
   FormArray,
@@ -6,19 +12,22 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
+import { Subject } from 'rxjs';
+import { ComponentPropertyService } from 'src/app/component-generation/component-generation-tab/component-property.service';
 import {
   getOptions,
   getPrototypeControl as getPrototypeControl,
   isRequired,
   setOptions,
 } from 'src/app/component-generation/decorators/decorators';
+import { Destroyable } from 'src/app/mixins/mixins';
 
 @Component({
   selector: 'app-form-array',
   templateUrl: './form-array.component.html',
   styleUrls: ['./form-array.component.scss'],
 })
-export class FormArrayComponent implements OnInit {
+export class FormArrayComponent implements OnInit, OnDestroy, Destroyable {
   @Input() name!: string;
   @Input() formArray!: FormArray;
   @Input() parentFormGroup!: FormGroup;
@@ -30,9 +39,12 @@ export class FormArrayComponent implements OnInit {
     asFormGroup: FormGroup;
     isFormGroup: boolean;
   }[];
+  private destroyed = new Subject<void>();
+  destroyed$ = this.destroyed.asObservable();
 
   constructor(
     private fb: FormBuilder,
+    private componentPropertyService: ComponentPropertyService,
     private changeDetectorRef: ChangeDetectorRef
   ) {}
 
@@ -59,24 +71,36 @@ export class FormArrayComponent implements OnInit {
       const asFormGroup = prototype as FormGroup;
       const formGroup = this.fb.group({});
       Object.keys(asFormGroup.controls).forEach((k) => {
-        const childControl = this.fb.control('');
+        const childControl = this.fb.control(asFormGroup.controls[k].value);
 
-        if (isRequired(asFormGroup.controls[k])) {
-          childControl.addValidators([Validators.required]);
-        }
+        this.componentPropertyService.addValidators(
+          asFormGroup.controls[k],
+          childControl,
+          this,
+          formGroup
+        );
+        // if (isRequired(asFormGroup.controls[k])) {
+        //   childControl.addValidators([Validators.required]);
+        // }
 
         const options = getOptions(asFormGroup.controls[k]);
         setOptions(childControl, options);
 
         formGroup.addControl(k, childControl);
       });
+      this.componentPropertyService.addValidators(asFormGroup, formGroup, this);
       control = formGroup;
     } else {
       control = this.fb.control('');
 
-      if (isRequired(prototype)) {
-        control.addValidators([Validators.required]);
-      }
+      this.componentPropertyService.addValidators(
+        this.prototypeItem,
+        control,
+        this
+      );
+      // if (isRequired(prototype)) {
+      //   control.addValidators([Validators.required]);
+      // }
     }
 
     this.formArray.push(control);
@@ -93,5 +117,9 @@ export class FormArrayComponent implements OnInit {
   remove(index: number): void {
     this.formArray.removeAt(index);
     this.controls.splice(index, 1);
+  }
+
+  ngOnDestroy(): void {
+    this.destroyed.next();
   }
 }

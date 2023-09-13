@@ -1,70 +1,99 @@
 <ng-container *ngIf="prototypeItemIsFormGroup">
   <ng-container *ngFor="let control of controls; let i = index">
-    <ng-container *ngIf="name === 'bindings'; else attributes">
-      <ng-container
-        *ngIf="
-          control.asFormGroup.controls['type'].value === BindingType.property &&
-          control.asFormGroup.controls['from'].value &&
-          (control.asFormGroup.controls['to'].value ||
-            control.asFormGroup.controls['toValue'].value)
-        "
-      >
-        <h3>[{{ control.asFormGroup.controls["from"].value }}]=</h3>
-        <p *ngIf="control.asFormGroup.controls['to'].value">
-          "{{ control.asFormGroup.controls["to"].value }}"
-        </p>
-        <p *ngIf="control.asFormGroup.controls['toValue'].value">
-          "'{{ control.asFormGroup.controls["toValue"].value }}'"
-        </p>
+    <app-form-error [control]="control.control"></app-form-error>
+    <ng-container [ngSwitch]="name">
+      <ng-container *ngSwitchCase="'bindings'">
+        <ng-container
+          *ngIf="
+            control.asFormGroup.controls['type'].value ===
+              BindingType.property &&
+            control.asFormGroup.controls['from'].value &&
+            (control.asFormGroup.controls['to'].value ||
+              control.asFormGroup.controls['toValue'].value)
+          "
+        >
+          <h3>[{{ control.asFormGroup.controls["from"].value }}]=</h3>
+          <p *ngIf="control.asFormGroup.controls['to'].value">
+            "{{ control.asFormGroup.controls["to"].value }}"
+          </p>
+          <p *ngIf="control.asFormGroup.controls['toValue'].value">
+            "'{{ control.asFormGroup.controls["toValue"].value }}'"
+          </p>
+        </ng-container>
+        <ng-container
+          *ngIf="
+            control.asFormGroup.controls['type'].value === BindingType.event &&
+            control.asFormGroup.controls['from'].value &&
+            control.asFormGroup.controls['to'].value
+          "
+        >
+          <h3>({{ control.asFormGroup.controls["from"].value }})=</h3>
+          <p *ngIf="control.asFormGroup.controls['to'].value">
+            "{{ control.asFormGroup.controls["to"].value }}"
+          </p>
+        </ng-container>
+        <ng-container
+          *ngIf="
+            control.asFormGroup.controls['type'].value === BindingType.twoWay &&
+            control.asFormGroup.controls['from'].value &&
+            control.asFormGroup.controls['to'].value
+          "
+        >
+          <h3>[({{ control.asFormGroup.controls["from"].value }})]=</h3>
+          <p *ngIf="control.asFormGroup.controls['to'].value">
+            "{{ control.asFormGroup.controls["to"].value }}"
+          </p>
+        </ng-container>
+        <ng-container
+          *ngIf="
+            control.asFormGroup.controls['type'].value ===
+              BindingType.innerText && control.asFormGroup.controls['to'].value
+          "
+        >
+          <h3>
+            {{ "{" }}{{ "{" }}{{ control.asFormGroup.controls["to"].value
+            }}{{ "}" }}{{ "}" }}
+          </h3>
+        </ng-container>
       </ng-container>
-      <ng-container
-        *ngIf="
-          control.asFormGroup.controls['type'].value === BindingType.event &&
-          control.asFormGroup.controls['from'].value &&
-          control.asFormGroup.controls['to'].value
-        "
-      >
-        <h3>({{ control.asFormGroup.controls["from"].value }})=</h3>
-        <p *ngIf="control.asFormGroup.controls['to'].value">
-          "{{ control.asFormGroup.controls["to"].value }}"
-        </p>
+      <ng-container *ngSwitchCase="'inputs'">
+        <ng-container
+          *ngIf="
+            control.asFormGroup.controls['name'].value &&
+            control.asFormGroup.controls['type'].value
+          "
+          ><h3>
+            @Input() {{ control.asFormGroup.controls["name"].value }}:&nbsp;
+          </h3>
+          <p>{{ control.asFormGroup.controls["type"].value }}</p>
+        </ng-container>
       </ng-container>
-      <ng-container
-        *ngIf="
-          control.asFormGroup.controls['type'].value === BindingType.twoWay &&
-          control.asFormGroup.controls['from'].value &&
-          control.asFormGroup.controls['to'].value
-        "
-      >
-        <h3>[({{ control.asFormGroup.controls["from"].value }})]=</h3>
-        <p *ngIf="control.asFormGroup.controls['to'].value">
-          "{{ control.asFormGroup.controls["to"].value }}"
-        </p>
+      <ng-container *ngSwitchCase="'outputs'">
+        <ng-container
+          *ngIf="
+            control.asFormGroup.controls['name'].value &&
+            control.asFormGroup.controls['type'].value
+          "
+          ><h3>
+            @Output() {{ control.asFormGroup.controls["name"].value }}:&nbsp;
+          </h3>
+          <p>{{ control.asFormGroup.controls["type"].value }}</p>
+        </ng-container>
       </ng-container>
-      <ng-container
-        *ngIf="
-          control.asFormGroup.controls['type'].value ===
-            BindingType.innerText && control.asFormGroup.controls['to'].value
-        "
-      >
-        <h3>
-          {{ "{" }}{{ "{" }}{{ control.asFormGroup.controls["to"].value
-          }}{{ "}" }}{{ "}" }}
-        </h3>
+      <ng-container *ngSwitchDefault>
+        <ng-container
+          *ngIf="
+            control.asFormGroup.controls['name'].value &&
+            control.asFormGroup.controls['value'].value
+          "
+          ><h3>{{ control.asFormGroup.controls["name"].value }}=</h3>
+          <p>"{{ control.asFormGroup.controls["value"].value }}"</p>
+        </ng-container>
       </ng-container>
     </ng-container>
-    <ng-template #attributes>
-      <ng-container
-        *ngIf="
-          control.asFormGroup.controls['name'].value &&
-          control.asFormGroup.controls['value'].value
-        "
-        ><h3>{{ control.asFormGroup.controls["name"].value }}=</h3>
-        <p>"{{ control.asFormGroup.controls["value"].value }}"</p>
-      </ng-container>
-    </ng-template>
+
     <app-form-group-error
-      [name]="name + ' ' + (i+1)"
+      [name]="name + ' ' + (i + 1)"
       [formGroup]="control.asFormGroup"
     ></app-form-group-error>
   </ng-container>

@@ -1,4 +1,10 @@
-import { ignore, options, required } from '../decorators/decorators';
+import {
+  validation,
+  conditionalRequired,
+  ignore,
+  options,
+  required,
+} from '../decorators/decorators';
 import { ComponentProperty } from './component.property';
 
 export enum BindingType {
@@ -29,12 +35,18 @@ export class Output {
   type: string = '';
 }
 
+@validation({
+  condition: (value) => (value.to && value.toType) || value.toValue,
+  message:
+    'If you provide a field to bind to ("To" value), provide also the type of that field ("To type" value). Otherwise, provide a "To Value"',
+})
 export class Binding {
   @required()
   @options(Object.values(BindingType))
   type: BindingType = BindingType.property;
-  @required()
+  @conditionalRequired((formValue) => formValue.type !== BindingType.innerText)
   from: any = '';
+  @conditionalRequired((formValue) => formValue.type === BindingType.innerText)
   to?: any = '';
   toType?: string = '';
   toValue?: any = '';

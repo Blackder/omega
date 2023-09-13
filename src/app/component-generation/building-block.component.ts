@@ -1,19 +1,29 @@
-import { Directive, OnInit, QueryList, ViewChildren } from '@angular/core';
+import {
+  Directive,
+  OnDestroy,
+  OnInit,
+  QueryList,
+  ViewChildren,
+} from '@angular/core';
 import { ComponentProperty } from './component-property/component.property';
 import { ComponentPropertyService } from './component-generation-tab/component-property.service';
 import { v4 } from 'uuid';
 import { FormGroup } from '@angular/forms';
 import { Selectable } from './selectable';
+import { Destroyable } from '../mixins/mixins';
+import { Subject } from 'rxjs';
 
 @Directive()
 export abstract class BuildingBlockComponent<
   TBuildingBlock extends ComponentProperty<TBuildingBlock>
-> implements OnInit, Selectable
+> implements OnInit, Selectable, OnDestroy, Destroyable
 {
   id!: string;
   protected property!: ComponentProperty<TBuildingBlock>;
   formGroup!: FormGroup;
   selected: boolean = false;
+  private destroyed = new Subject<void>();
+  destroyed$ = this.destroyed.asObservable();
 
   @ViewChildren(BuildingBlockComponent) children!: QueryList<
     BuildingBlockComponent<TBuildingBlock>
@@ -50,5 +60,9 @@ export abstract class BuildingBlockComponent<
 
   get valid(): boolean {
     return this.formGroup.valid;
+  }
+
+  ngOnDestroy(): void {
+    this.destroyed.next();
   }
 }

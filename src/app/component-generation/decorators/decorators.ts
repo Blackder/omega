@@ -2,10 +2,11 @@ import { AbstractControl, FormGroup } from '@angular/forms';
 import 'reflect-metadata';
 
 const requiredKey = Symbol('required');
-const typeKey = Symbol('type');
+const conditionalRequiredKey = Symbol('conditionalRequired');
 const ignoreKey = Symbol('ignore');
 const optionsKey = Symbol('options');
 const prototypeControlKey = Symbol('prototypeControl');
+const validationKey = Symbol('validation');
 
 export function required() {
   return Reflect.metadata(requiredKey, true);
@@ -19,6 +20,28 @@ export function isRequired(target: any, propertyKey?: string) {
   return propertyKey
     ? Reflect.getMetadata(requiredKey, target, propertyKey)
     : Reflect.getMetadata(requiredKey, target);
+}
+
+export function conditionalRequired(
+  condition: (parentFormValue: any) => boolean
+) {
+  return Reflect.metadata(conditionalRequiredKey, condition);
+}
+
+export function setAsConditionalRequired(
+  target: any,
+  condition: (parentFormValue: any) => boolean
+) {
+  return Reflect.defineMetadata(conditionalRequiredKey, condition, target);
+}
+
+export function getConditionalRequiredFunction(
+  target: any,
+  propertyKey?: string
+) {
+  return propertyKey
+    ? Reflect.getMetadata(conditionalRequiredKey, target, propertyKey)
+    : Reflect.getMetadata(conditionalRequiredKey, target);
 }
 
 export function ignore() {
@@ -51,4 +74,21 @@ export function getPrototypeControl(target: any, propertyKey?: string) {
   return propertyKey
     ? Reflect.getMetadata(prototypeControlKey, target, propertyKey)
     : Reflect.getMetadata(prototypeControlKey, target);
+}
+
+export interface Validation {
+  condition: (value: any) => boolean;
+  message: string;
+}
+
+export function validation(validation: Validation) {
+  return Reflect.metadata(validationKey, validation);
+}
+
+export function setValidation(target: any, validation: Validation) {
+  return Reflect.defineMetadata(validationKey, validation, target);
+}
+
+export function getValidation(target: any) {
+  return Reflect.getMetadata(validationKey, target);
 }

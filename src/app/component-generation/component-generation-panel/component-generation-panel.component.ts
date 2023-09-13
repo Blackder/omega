@@ -3,12 +3,13 @@ import {
   ChangeDetectorRef,
   Component,
   Input,
+  OnDestroy,
   OnInit,
   QueryList,
   ViewChild,
   ViewChildren,
 } from '@angular/core';
-import { Container, dropComponent, toggleFor } from 'src/app/mixins/mixins';
+import { Container, Destroyable, dropComponent, toggleFor } from 'src/app/mixins/mixins';
 import { ComponentResolver } from 'src/app/services/component-resolver.service';
 import { ContainerHostDirective } from '../container/container-host.directive';
 import { DropData } from 'src/app/directives/drag-drop/drop-zone.directive';
@@ -30,7 +31,7 @@ import { FileDownloadService } from './file-download.service';
 })
 export class ComponentGenerationPanelComponent<
   TBuildingBlock extends ComponentProperty<TBuildingBlock>
-> implements OnInit, AfterViewInit, Selectable
+> implements OnInit, AfterViewInit, Selectable, OnDestroy, Destroyable
 {
   @Input() framework!: string;
 
@@ -48,6 +49,8 @@ export class ComponentGenerationPanelComponent<
   container!: Container<TBuildingBlock>;
   private invalidSubmission = new Subject<boolean>();
   invalidSubmission$ = this.invalidSubmission.pipe(toggleFor(1000));
+  private destroyed = new Subject<void>();
+  destroyed$ = this.destroyed.asObservable();
 
   constructor(
     private componentResolver: ComponentResolver,
@@ -119,5 +122,9 @@ export class ComponentGenerationPanelComponent<
         })
       )
       .subscribe();
+  }
+
+  ngOnDestroy(): void {
+    this.destroyed.next();
   }
 }
