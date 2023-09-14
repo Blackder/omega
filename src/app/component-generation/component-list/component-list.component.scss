@@ -1,4 +1,5 @@
 .component-list {
+  padding: 1rem 0.5rem;
   max-height: 76vh;
   overflow-y: scroll;
   margin: 0;
@@ -6,8 +7,8 @@
 .component {
   list-style-type: none;
   padding: 1rem;
-  border: 1px solid black;
   border-radius: 5px;
+  box-shadow: 1px 1px 5px 1px black;
   position: relative;
   cursor: pointer;
   height: fit-content !important;
@@ -15,6 +16,9 @@
   justify-content: space-between;
   p , mat-icon {
     flex: 1 1 1rem;
+  }
+  mat-icon {
+    text-align: right;
   }
   &::before {
     content: "";

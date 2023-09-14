@@ -1,9 +1,10 @@
 @import "../../../color.scss";
 
 app-component-property {
+  padding: 0 0.5rem;
   height: 76vh;
   overflow-y: auto;
-  .title {
+  .selected {
     color: $opaqueSelectedColor;
   }
 }

@@ -3,9 +3,13 @@
   [class.selected]="selected"
   (click)="select($event)"
 >
-  <h2 *ngIf="container && container.children.length === 0">
-    Drag and drop some components here to build your component
-  </h2>
+  <div *ngIf="container && container.children.length === 0">
+    <h2>Drag and drop some blocks here to build your component</h2>
+    <img src="/assets/Curved_Arrow.svg" />
+  </div>
+
+  <h3 *ngIf="!selected">Click this box to see the component's property</h3>
+
   <app-component-property-display
     [framework]="framework"
     [componentId]="id"

@@ -1,18 +1,26 @@
 @import "../../../color.scss";
 
 .component-generation-panel {
-  background-color: white;
+  background-color: #f2f2f2;
   height: 76vh;
-  border: 1px solid black;
   overflow-y: auto;
   padding: 1rem;
   position: relative;
   h2 {
     position: absolute;
-    top: 50%;
+    top: 45%;
     width: 97%;
     text-align: center;
     color: $primaryColor;
+  }
+  img {
+    transform: scale(0.25) rotate(-32deg);
+    left: -21%;
+    top: 0;
+  }
+  h3 {
+    text-align: right;
+    color: $opaqueSelectedColor;
   }
   app-container:not(:last-child) {
     margin-bottom: 1rem;
