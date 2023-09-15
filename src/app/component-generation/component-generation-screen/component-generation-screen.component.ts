@@ -10,7 +10,6 @@ import { ComponentGenerationService } from 'src/app/services/api/clients/compone
   encapsulation: ViewEncapsulation.None,
 })
 export class ComponentGenerationScreenComponent {
-  formGroup: FormGroup;
   frameworksObservable$: Observable<string[]>;
   tabs: { framework: string }[] = [];
   selectedIndex?: number;
@@ -19,24 +18,12 @@ export class ComponentGenerationScreenComponent {
     componentGenerationService: ComponentGenerationService,
     fb: FormBuilder
   ) {
-    const frameworkControl = fb.control('', [Validators.required]);
-    this.formGroup = fb.group({
-      framework: frameworkControl,
-    });
     this.frameworksObservable$ = componentGenerationService.getFrameworks();
-    this.frameworksObservable$
-      .pipe(
-        tap((frameworks) => {
-          console.log(frameworks);
-          frameworkControl.setValue(frameworks[0], { emitEvent: true });
-        })
-      )
-      .subscribe();
   }
 
   addNewTab(framework: string): void {
     this.tabs.push({
-      framework: this.formGroup.get('framework')?.value,
+      framework: framework,
     });
     this.selectedIndex = this.tabs.length - 1;
   }
