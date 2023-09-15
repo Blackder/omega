@@ -20,7 +20,7 @@ import { ComponentProperty } from '../component-property/component.property';
 import { ComponentPropertyFactory } from '../component-property/component-property-factory.service';
 import { v4 } from 'uuid';
 import { ComponentPropertyService } from '../component-generation-tab/component-property.service';
-import { Selectable } from '../selectable';
+import { ContainerBlock } from '../block';
 import { DraggableComponent } from 'src/app/directives/drag-drop/draggable.directive';
 import { FormGroup } from '@angular/forms';
 
@@ -94,13 +94,15 @@ export class ContainerComponent<
     );
   }
 
-  remove(): void {
+  remove(event: Event): void {
+    event.stopPropagation();
     this.parentContainer.remove(this.hostView);
+    this.componentPropertyService.onComponentRemoved(this);
   }
 
   select(event: Event): void {
     event.stopPropagation();
-    this.componentPropertyService.onComponentSelected(this.id, this);
+    this.componentPropertyService.onComponentSelected(this);
   }
 
   protected override getFormGroupValue(): any {

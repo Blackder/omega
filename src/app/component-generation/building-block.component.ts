@@ -9,14 +9,14 @@ import { ComponentProperty } from './component-property/component.property';
 import { ComponentPropertyService } from './component-generation-tab/component-property.service';
 import { v4 } from 'uuid';
 import { FormGroup } from '@angular/forms';
-import { Selectable } from './selectable';
+import { Block } from './block';
 import { Destroyable } from '../mixins/mixins';
 import { Subject } from 'rxjs';
 
 @Directive()
 export abstract class BuildingBlockComponent<
   TBuildingBlock extends ComponentProperty<TBuildingBlock>
-> implements OnInit, Selectable, OnDestroy, Destroyable
+> implements OnInit, Block, OnDestroy, Destroyable
 {
   id!: string;
   protected property!: ComponentProperty<TBuildingBlock>;
@@ -38,7 +38,7 @@ export abstract class BuildingBlockComponent<
     this.formGroup = this.registerComponentProperty(this.id, this.property);
 
     setTimeout(() => {
-      this.componentPropertyService.onComponentSelected(this.id, this);
+      this.componentPropertyService.onComponentSelected(this);
     });
   }
 

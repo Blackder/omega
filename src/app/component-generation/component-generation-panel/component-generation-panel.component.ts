@@ -9,7 +9,12 @@ import {
   ViewChild,
   ViewChildren,
 } from '@angular/core';
-import { Container, Destroyable, dropComponent, toggleFor } from 'src/app/mixins/mixins';
+import {
+  Container,
+  Destroyable,
+  dropComponent,
+  toggleFor,
+} from 'src/app/mixins/mixins';
 import { ComponentResolver } from 'src/app/services/component-resolver.service';
 import { ContainerHostDirective } from '../container/container-host.directive';
 import { DropData } from 'src/app/directives/drag-drop/drop-zone.directive';
@@ -17,7 +22,7 @@ import { ComponentPropertyFactory } from '../component-property/component-proper
 import { ComponentProperty } from '../component-property/component.property';
 import { ComponentPropertyService } from '../component-generation-tab/component-property.service';
 import { v4 } from 'uuid';
-import { Selectable } from '../selectable';
+import { ContainerBlock } from '../block';
 import { BuildingBlockComponent } from '../building-block.component';
 import { ComponentGenerationService } from 'src/app/services/api/clients/componentGeneration.service';
 import { FormGroup } from '@angular/forms';
@@ -31,7 +36,12 @@ import { FileDownloadService } from './file-download.service';
 })
 export class ComponentGenerationPanelComponent<
   TBuildingBlock extends ComponentProperty<TBuildingBlock>
-> implements OnInit, AfterViewInit, Selectable, OnDestroy, Destroyable
+> implements
+    OnInit,
+    AfterViewInit,
+    ContainerBlock<TBuildingBlock>,
+    OnDestroy,
+    Destroyable
 {
   @Input() framework!: string;
 
@@ -72,7 +82,7 @@ export class ComponentGenerationPanelComponent<
       this,
       'Component'
     );
-    this.componentPropertyService.onComponentSelected(this.id, this);
+    this.componentPropertyService.onComponentSelected(this);
   }
 
   ngAfterViewInit(): void {
@@ -91,7 +101,7 @@ export class ComponentGenerationPanelComponent<
 
   select(event: Event): void {
     event.stopPropagation();
-    this.componentPropertyService.onComponentSelected(this.id, this);
+    this.componentPropertyService.onComponentSelected(this);
   }
 
   generate(): void {

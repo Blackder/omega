@@ -23,12 +23,12 @@ import {
   setValidation,
 } from '../decorators/decorators';
 import { ComponentProperty } from '../component-property/component.property';
-import { Selectable } from '../selectable';
+import { Block, ContainerBlock } from '../block';
 import { Destroyable } from 'src/app/mixins/mixins';
 
 export interface ComponentPropertyForm {
   formGroup: FormGroup;
-  component: Selectable;
+  component: Block;
   name: string;
 }
 
@@ -53,7 +53,8 @@ function validation(validation: Validation): ValidatorFn {
 
 @Injectable()
 export class ComponentPropertyService {
-  private currentSelected: Selectable | null = null;
+  private currentSelected: Block | null = null;
+  private firstSelected: Block | null = null;
   private map: {
     [componentId: string]: ComponentPropertyForm;
   } = {};
@@ -68,7 +69,7 @@ export class ComponentPropertyService {
   >(
     componentId: string,
     componentProperty: ComponentProperty<TBuildingBlock>,
-    component: Selectable & Destroyable,
+    component: Block & Destroyable,
     name: string
   ): FormGroup {
     if (this.map[componentId]) {
@@ -99,12 +100,13 @@ export class ComponentPropertyService {
     return formGroup;
   }
 
-  onComponentSelected<TBuildingBlock extends ComponentProperty<TBuildingBlock>>(
-    componentId: string,
-    component: Selectable
-  ): void {
+  onComponentSelected(component: Block): void {
     if (this.currentSelected === component) {
       return;
+    }
+
+    if (!this.firstSelected) {
+      this.firstSelected = component;
     }
 
     if (this.currentSelected) {
@@ -112,7 +114,32 @@ export class ComponentPropertyService {
     }
     this.currentSelected = component;
     component.selected = true;
-    this.selectedPropertySubject.next(this.map[componentId]);
+    this.selectedPropertySubject.next(this.map[component.id]);
+  }
+
+  onComponentRemoved(component: Block): void {
+    const currentSelectedComponentRemoved = this.removeComponent(component);
+    if (currentSelectedComponentRemoved) {
+      this.onComponentSelected(this.firstSelected as Block);
+    }
+  }
+
+  private removeComponent<
+    TBuildingBlock extends ComponentProperty<TBuildingBlock>
+  >(component: Block): boolean {
+    let currentSelectedComponentRemoved = component === this.currentSelected;
+
+    delete this.map[component.id];
+    const asContainer = component as ContainerBlock<TBuildingBlock>;
+
+    if (asContainer?.container?.children.length > 0) {
+      asContainer.container.children.forEach((c) => {
+        currentSelectedComponentRemoved =
+          currentSelectedComponentRemoved || this.removeComponent(c);
+      });
+    }
+
+    return currentSelectedComponentRemoved;
   }
 
   getComponentPropertyFormGroup(componentId: string): FormGroup {
@@ -156,7 +183,10 @@ export class ComponentPropertyService {
         );
       }
 
-      this.setValidationDecoratorForPrototypeControl(parentFormGroup, member.constructor);
+      this.setValidationDecoratorForPrototypeControl(
+        parentFormGroup,
+        member.constructor
+      );
       setPrototypeControl(control, parentFormGroup);
       // (control as FormArray).push(formGroup);
     } else {
