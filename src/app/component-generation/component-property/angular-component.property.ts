@@ -65,6 +65,7 @@ export class AngularBuildingBlockProperty
 {
   @ignore()
   name?: string;
+  value?: string = '';
   attributes?: Attribute[] = [new Attribute()];
 
   bindings?: Binding[] = [new Binding()];

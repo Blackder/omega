@@ -202,7 +202,7 @@ export class ComponentGenerationService {
             }
         }
 
-        let localVarPath = `/component-generation`;
+        let localVarPath = `/component-generation/${this.configuration.encodeParam({name: "framework", value: framework, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}`;
         return this.httpClient.request<Array<string>>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,

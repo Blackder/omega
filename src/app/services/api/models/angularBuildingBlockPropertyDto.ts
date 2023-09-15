@@ -15,6 +15,7 @@ import { BindingDto } from './bindingDto';
 
 export interface AngularBuildingBlockPropertyDto { 
     name?: string;
+    value?: string;
     attributes?: Array<AttributeDto>;
     bindings?: Array<BindingDto>;
     children?: Array<AngularBuildingBlockPropertyDto>;

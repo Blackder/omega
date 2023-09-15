@@ -7,8 +7,13 @@
   [component]="this"
   (click)="select($event)"
 >
-  <mat-icon class="close-icon" (click)="remove()">close</mat-icon>
-  <h2>{{ data }}</h2>
+  <mat-icon class="close-icon" (click)="remove($event)">close</mat-icon>
+
+  <div class="row header">
+    <mat-icon color="primary">drag_indicator</mat-icon>
+    <h2>{{ data }}</h2>
+  </div>
+
   <app-component-property-display
     [framework]="framework"
     [componentId]="id"

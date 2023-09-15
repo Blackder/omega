@@ -9,8 +9,8 @@
     </ng-container>
     <ng-template #normalFormControl>
       <ng-container *ngIf="control.name && control.control.value">
-        <h3>{{ control.name }}=</h3>
-        <p>{{ control.control.value }}</p>
+        <h3>{{ control.name }}&nbsp;</h3>
+        <p>= {{ control.control.value }}</p>
       </ng-container>
       <app-form-error
         [name]="control.name"
