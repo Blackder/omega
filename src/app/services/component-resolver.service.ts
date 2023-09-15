@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { ContainerComponent } from '../component-generation/container/container.component';
+import { Injectable, Type } from '@angular/core';
+import { BlockComponent } from '../component-generation/block/block.component';
 
 const htmlContainerComponents = [
   'a',
@@ -20,11 +20,19 @@ const htmlContainerComponents = [
 
 @Injectable()
 export class ComponentResolver {
+  private selfClosedElements = ['input', 'img'];
+
   private isHtmlContainerComponent(componentName: string): boolean {
     return htmlContainerComponents.includes(componentName);
   }
 
-  resolve(componentName: string): any {
-    return ContainerComponent;
+  resolve(componentName: string): {
+    component: Type<any>;
+    isDropContainer: boolean;
+  } {
+    return {
+      component: BlockComponent,
+      isDropContainer: !this.selfClosedElements.includes(componentName),
+    };
   }
 }

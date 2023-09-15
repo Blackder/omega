@@ -94,11 +94,11 @@ function insertComponent<
   framework: string,
   atIndex?: number
 ): void {
-  const componentRef = container.insert(
-    componentResolver.resolve(componentName),
-    atIndex
-  );
-  componentRef.setInput('data', data);
+  const componentData = componentResolver.resolve(componentName);
+
+  const componentRef = container.insert(componentData.component, atIndex);
+  componentRef.setInput('name', data);
+  componentRef.setInput('isDropContainer', componentData.isDropContainer);
   componentRef.setInput('parentContainer', container);
   componentRef.setInput('hostView', componentRef.hostView);
   componentRef.setInput('framework', framework);

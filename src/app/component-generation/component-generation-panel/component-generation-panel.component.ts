@@ -16,7 +16,7 @@ import {
   toggleFor,
 } from 'src/app/mixins/mixins';
 import { ComponentResolver } from 'src/app/services/component-resolver.service';
-import { ContainerHostDirective } from '../container/container-host.directive';
+import { ContainerHostDirective } from '../block/container-host.directive';
 import { DropData } from 'src/app/directives/drag-drop/drop-zone.directive';
 import { ComponentPropertyFactory } from '../component-property/component-property-factory.service';
 import { ComponentProperty } from '../component-property/component.property';

@@ -62,6 +62,11 @@ export abstract class BuildingBlockComponent<
     return this.formGroup.valid;
   }
 
+  select(event: Event): void {
+    event.stopPropagation();
+    this.componentPropertyService.onComponentSelected(this);
+  }
+
   ngOnDestroy(): void {
     this.destroyed.next();
   }

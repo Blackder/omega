@@ -25,29 +25,24 @@ import { DraggableComponent } from 'src/app/directives/drag-drop/draggable.direc
 import { FormGroup } from '@angular/forms';
 
 @Component({
-  selector: 'app-container',
-  templateUrl: './container.component.html',
-  styleUrls: ['./container.component.scss'],
-  providers: [
-    {
-      provide: BuildingBlockComponent,
-      useExisting: forwardRef(() => ContainerComponent),
-    },
-  ],
+  selector: 'app-block',
+  templateUrl: './block.component.html',
+  styleUrls: ['./block.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-export class ContainerComponent<
+export class BlockComponent<
     TBuildingBlock extends ComponentProperty<TBuildingBlock>
   >
   extends BuildingBlockComponent<TBuildingBlock>
-  implements OnInit, AfterViewInit, DraggableComponent<TBuildingBlock>
+  implements AfterViewInit, DraggableComponent<TBuildingBlock>
 {
-  @ViewChild(ContainerHostDirective, { static: true })
+  @ViewChild(ContainerHostDirective)
   containerHost!: ContainerHostDirective;
-  @Input() data!: any;
+  @Input() name!: any;
   @Input() parentContainer!: Container<TBuildingBlock>;
   @Input() hostView!: ViewRef;
   @Input() framework!: string;
+  @Input() isDropContainer: boolean = true;
   moveEffect = DragEffect.move;
 
   private container!: Container<TBuildingBlock>;
@@ -62,7 +57,9 @@ export class ContainerComponent<
   }
 
   ngAfterViewInit(): void {
-    this.container = new Container(this.containerHost.viewContainerRef);
+    if (this.isDropContainer) {
+      this.container = new Container(this.containerHost.viewContainerRef);
+    }
   }
 
   override initializeProperty(): ComponentProperty<TBuildingBlock> {
@@ -81,7 +78,7 @@ export class ContainerComponent<
       id,
       property,
       this,
-      this.data
+      this.name
     );
   }
 
@@ -100,14 +97,9 @@ export class ContainerComponent<
     this.componentPropertyService.onComponentRemoved(this);
   }
 
-  select(event: Event): void {
-    event.stopPropagation();
-    this.componentPropertyService.onComponentSelected(this);
-  }
-
   protected override getFormGroupValue(): any {
     const value = super.getFormGroupValue();
-    value.name = this.data;
+    value.name = this.name;
     return value;
   }
 
