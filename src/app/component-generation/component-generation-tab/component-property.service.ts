@@ -21,6 +21,10 @@ import {
   shouldIgnore,
   Validation,
   setValidation,
+  getLabel,
+  setLabel,
+  hide,
+  isHidden,
 } from '../decorators/decorators';
 import { ComponentProperty } from '../component-property/component.property';
 import { Block, ContainerBlock } from '../block';
@@ -194,6 +198,15 @@ export class ComponentPropertyService {
       const options = getOptions(parent, key);
       if (options) {
         setOptions(control, options);
+      }
+
+      if (isHidden(parent, key)) {
+        hide(control);
+      }
+
+      const label = getLabel(parent, key);
+      if (label) {
+        setLabel(control, label);
       }
 
       this.addValidators(parent, control, component, parentFormGroup, key);

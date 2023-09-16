@@ -8,7 +8,9 @@
       ></app-angular-form-array-display>
     </ng-container>
     <ng-template #normalFormControl>
-      <ng-container *ngIf="control.name && control.control.value">
+      <ng-container
+        *ngIf="!control.hidden && control.name && control.control.value"
+      >
         <h3>{{ control.name }}&nbsp;</h3>
         <p>= {{ control.control.value }}</p>
       </ng-container>

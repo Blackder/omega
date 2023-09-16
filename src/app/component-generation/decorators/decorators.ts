@@ -3,10 +3,12 @@ import 'reflect-metadata';
 
 const requiredKey = Symbol('required');
 const conditionalRequiredKey = Symbol('conditionalRequired');
+const hiddenKey = Symbol('hidden');
 const ignoreKey = Symbol('ignore');
 const optionsKey = Symbol('options');
 const prototypeControlKey = Symbol('prototypeControl');
 const validationKey = Symbol('validation');
+const labelKey = Symbol('label');
 
 export function required() {
   return Reflect.metadata(requiredKey, true);
@@ -49,7 +51,21 @@ export function ignore() {
 }
 
 export function shouldIgnore(target: any, propertyKey: string) {
-  return Reflect.getMetadata(ignoreKey, target, propertyKey);
+  return Reflect.getMetadata(ignoreKey, target, propertyKey)
+}
+
+export function hidden() {
+  return Reflect.metadata(hiddenKey, true);
+}
+
+export function hide(target: any) {
+  return Reflect.defineMetadata(hiddenKey, true, target);
+}
+
+export function isHidden(target: any, propertyKey?: string) {
+  return propertyKey
+    ? Reflect.getMetadata(hiddenKey, target, propertyKey)
+    : Reflect.getMetadata(hiddenKey, target);
 }
 
 export function options(options: any[]) {
@@ -91,4 +107,18 @@ export function setValidation(target: any, validation: Validation) {
 
 export function getValidation(target: any) {
   return Reflect.getMetadata(validationKey, target);
+}
+
+export function label(label: string) {
+  return Reflect.metadata(labelKey, label);
+}
+
+export function setLabel(target: any, label: string) {
+  return Reflect.defineMetadata(labelKey, label, target);
+}
+
+export function getLabel(target: any, propertyKey?: string) {
+  return propertyKey
+    ? Reflect.getMetadata(labelKey, target, propertyKey)
+    : Reflect.getMetadata(labelKey, target);
 }

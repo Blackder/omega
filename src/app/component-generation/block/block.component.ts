@@ -64,7 +64,8 @@ export class BlockComponent<
 
   override initializeProperty(): ComponentProperty<TBuildingBlock> {
     const property = this.componentPropertyFactory.createBuildingBlockProperty(
-      this.framework
+      this.framework,
+      this.name
     );
 
     return property;
@@ -95,12 +96,6 @@ export class BlockComponent<
     event.stopPropagation();
     this.parentContainer.remove(this.hostView);
     this.componentPropertyService.onComponentRemoved(this);
-  }
-
-  protected override getFormGroupValue(): any {
-    const value = super.getFormGroupValue();
-    value.name = this.name;
-    return value;
   }
 
   override getProperty(): ComponentProperty<TBuildingBlock> {

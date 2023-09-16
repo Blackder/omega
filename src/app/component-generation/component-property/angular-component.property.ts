@@ -1,9 +1,11 @@
 import {
   validation,
   conditionalRequired,
-  ignore,
+  hidden,
   options,
   required,
+  label,
+  ignore,
 } from '../decorators/decorators';
 import { ComponentProperty } from './component.property';
 
@@ -63,15 +65,18 @@ export class Binding {
 export class AngularBuildingBlockProperty
   implements ComponentProperty<AngularBuildingBlockProperty>
 {
-  @ignore()
+  @hidden()
   name?: string;
   value?: string = '';
   attributes?: Attribute[] = [new Attribute()];
-
   bindings?: Binding[] = [new Binding()];
 
   @ignore()
   children?: AngularBuildingBlockProperty[] = [];
+
+  constructor(name: string) {
+    this.name = name;
+  }
 
   copyFrom(value: any): void {
     this.name = value.name;
@@ -99,6 +104,54 @@ export class AngularComponentProperty
     this.componentName = value.componentName;
     this.inputs = value.inputs;
     this.outputs = value.outputs;
+  }
+
+  setChildren(children: AngularBuildingBlockProperty[]): void {
+    this.children = children;
+  }
+}
+
+export class AngularSelfClosedBuildingBlockProperty
+  implements ComponentProperty<AngularBuildingBlockProperty>
+{
+  @hidden()
+  name?: string;
+  attributes?: Attribute[] = [new Attribute()];
+  bindings?: Binding[] = [new Binding()];
+
+  @ignore()
+  children?: AngularBuildingBlockProperty[] = [];
+
+  constructor(name: string) {
+    this.name = name;
+  }
+
+  copyFrom(value: any): void {
+    this.name = value.name;
+    this.attributes = value.attributes;
+    this.bindings = value.bindings;
+  }
+
+  setChildren(children: AngularBuildingBlockProperty[]): void {
+    this.children = children;
+  }
+}
+
+export class AngularCustomComponentBuildingBlockProperty
+  implements ComponentProperty<AngularBuildingBlockProperty>
+{
+  @label('Selector')
+  name?: string = '';
+  attributes?: Attribute[] = [new Attribute()];
+  bindings?: Binding[] = [new Binding()];
+
+  @ignore()
+  children?: AngularBuildingBlockProperty[] = [];
+
+  copyFrom(value: any): void {
+    this.name = value.name;
+    this.attributes = value.attributes;
+    this.bindings = value.bindings;
   }
 
   setChildren(children: AngularBuildingBlockProperty[]): void {
