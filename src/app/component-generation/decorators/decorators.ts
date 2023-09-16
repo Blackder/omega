@@ -4,6 +4,7 @@ import 'reflect-metadata';
 const requiredKey = Symbol('required');
 const conditionalRequiredKey = Symbol('conditionalRequired');
 const hiddenKey = Symbol('hidden');
+const hiddenFromDisplayOnlyKey = Symbol('hiddenFromDisplayOnly');
 const ignoreKey = Symbol('ignore');
 const optionsKey = Symbol('options');
 const prototypeControlKey = Symbol('prototypeControl');
@@ -51,7 +52,7 @@ export function ignore() {
 }
 
 export function shouldIgnore(target: any, propertyKey: string) {
-  return Reflect.getMetadata(ignoreKey, target, propertyKey)
+  return Reflect.getMetadata(ignoreKey, target, propertyKey);
 }
 
 export function hidden() {
@@ -66,6 +67,23 @@ export function isHidden(target: any, propertyKey?: string) {
   return propertyKey
     ? Reflect.getMetadata(hiddenKey, target, propertyKey)
     : Reflect.getMetadata(hiddenKey, target);
+}
+
+/*
+Only hide the value of the control  in display mode (inside the component)
+ */
+export function hiddenFromDisplayOnly() {
+  return Reflect.metadata(hiddenFromDisplayOnlyKey, true);
+}
+
+export function hideFromDisplayOnly(target: any) {
+  return Reflect.defineMetadata(hiddenFromDisplayOnlyKey, true, target);
+}
+
+export function isHiddenFromDisplayOnly(target: any, propertyKey?: string) {
+  return propertyKey
+    ? Reflect.getMetadata(hiddenFromDisplayOnlyKey, target, propertyKey)
+    : Reflect.getMetadata(hiddenFromDisplayOnlyKey, target);
 }
 
 export function options(options: any[]) {

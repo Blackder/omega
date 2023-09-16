@@ -25,6 +25,8 @@ import {
   setLabel,
   hide,
   isHidden,
+  isHiddenFromDisplayOnly,
+  hideFromDisplayOnly,
 } from '../decorators/decorators';
 import { ComponentProperty } from '../component-property/component.property';
 import { Block, ContainerBlock } from '../block';
@@ -202,6 +204,10 @@ export class ComponentPropertyService {
 
       if (isHidden(parent, key)) {
         hide(control);
+      }
+
+      if (isHiddenFromDisplayOnly(parent, key)) {
+        hideFromDisplayOnly(control);
       }
 
       const label = getLabel(parent, key);

@@ -6,6 +6,7 @@ import {
   required,
   label,
   ignore,
+  hiddenFromDisplayOnly,
 } from '../decorators/decorators';
 import { ComponentProperty } from './component.property';
 
@@ -119,9 +120,6 @@ export class AngularSelfClosedBuildingBlockProperty
   attributes?: Attribute[] = [new Attribute()];
   bindings?: Binding[] = [new Binding()];
 
-  @ignore()
-  children?: AngularBuildingBlockProperty[] = [];
-
   constructor(name: string) {
     this.name = name;
   }
@@ -133,7 +131,9 @@ export class AngularSelfClosedBuildingBlockProperty
   }
 
   setChildren(children: AngularBuildingBlockProperty[]): void {
-    this.children = children;
+    if (children.length > 0) {
+      throw new Error('Self-closed elements cannot have children!');
+    }
   }
 }
 
@@ -141,6 +141,8 @@ export class AngularCustomComponentBuildingBlockProperty
   implements ComponentProperty<AngularBuildingBlockProperty>
 {
   @label('Selector')
+  @required()
+  @hiddenFromDisplayOnly()
   name?: string = '';
   attributes?: Attribute[] = [new Attribute()];
   bindings?: Binding[] = [new Binding()];

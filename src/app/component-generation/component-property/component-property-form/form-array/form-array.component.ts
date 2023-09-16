@@ -15,12 +15,15 @@ import {
 import { Subject } from 'rxjs';
 import { ComponentPropertyService } from 'src/app/component-generation/component-generation-tab/component-property.service';
 import {
+  getLabel,
   getOptions,
   getPrototypeControl as getPrototypeControl,
   isRequired,
+  setLabel,
   setOptions,
 } from 'src/app/component-generation/decorators/decorators';
 import { Destroyable } from 'src/app/mixins/mixins';
+import { FormControlMetadata } from '../form.util';
 
 @Component({
   selector: 'app-form-array',
@@ -34,11 +37,7 @@ export class FormArrayComponent implements OnInit, OnDestroy, Destroyable {
   prototypeItem!: FormGroup;
   prototypeItemIsFormGroup!: boolean;
 
-  controls!: {
-    control: AbstractControl;
-    asFormGroup: FormGroup;
-    isFormGroup: boolean;
-  }[];
+  controls!: FormControlMetadata[];
   private destroyed = new Subject<void>();
   destroyed$ = this.destroyed.asObservable();
 
@@ -55,11 +54,9 @@ export class FormArrayComponent implements OnInit, OnDestroy, Destroyable {
   }
 
   protected updateControls(): void {
-    this.controls = this.formArray.controls.map((c) => ({
-      control: c,
-      isFormGroup: this.prototypeItemIsFormGroup,
-      asFormGroup: c as FormGroup,
-    }));
+    this.controls = this.formArray.controls.map(
+      (c) => new FormControlMetadata(c, '')
+    );
   }
 
   add(): void {
@@ -79,12 +76,12 @@ export class FormArrayComponent implements OnInit, OnDestroy, Destroyable {
           this,
           formGroup
         );
-        // if (isRequired(asFormGroup.controls[k])) {
-        //   childControl.addValidators([Validators.required]);
-        // }
 
         const options = getOptions(asFormGroup.controls[k]);
         setOptions(childControl, options);
+
+        const label = getLabel(asFormGroup.controls[k]);
+        setLabel(childControl, label);
 
         formGroup.addControl(k, childControl);
       });
@@ -98,18 +95,11 @@ export class FormArrayComponent implements OnInit, OnDestroy, Destroyable {
         control,
         this
       );
-      // if (isRequired(prototype)) {
-      //   control.addValidators([Validators.required]);
-      // }
     }
 
     this.formArray.push(control);
 
-    this.controls.push({
-      control: control,
-      isFormGroup: this.prototypeItemIsFormGroup,
-      asFormGroup: control as FormGroup,
-    });
+    this.controls.push(new FormControlMetadata(control, ''));
 
     this.changeDetectorRef.detectChanges();
   }

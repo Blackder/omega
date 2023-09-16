@@ -22,8 +22,7 @@ import { ComponentPropertyFactory } from '../component-property/component-proper
 import { ComponentProperty } from '../component-property/component.property';
 import { ComponentPropertyService } from '../component-generation-tab/component-property.service';
 import { v4 } from 'uuid';
-import { ContainerBlock } from '../block';
-import { BuildingBlockComponent } from '../building-block.component';
+import { Block, ContainerBlock } from '../block';
 import { ComponentGenerationService } from 'src/app/services/api/clients/componentGeneration.service';
 import { FormGroup } from '@angular/forms';
 import { Subject, tap } from 'rxjs';
@@ -47,10 +46,6 @@ export class ComponentGenerationPanelComponent<
 
   @ViewChild(ContainerHostDirective, { static: true })
   containerHost!: ContainerHostDirective;
-
-  @ViewChildren(BuildingBlockComponent<TBuildingBlock>) children!: QueryList<
-    BuildingBlockComponent<TBuildingBlock>
-  >;
 
   id!: string;
   property?: ComponentProperty<TBuildingBlock>;

@@ -5,12 +5,8 @@ import {
   OnInit,
   SimpleChanges,
 } from '@angular/core';
-import { AbstractControl, FormArray, FormGroup } from '@angular/forms';
-import {
-  getLabel,
-  getOptions,
-  isHidden,
-} from 'src/app/component-generation/decorators/decorators';
+import { FormGroup } from '@angular/forms';
+import { FormControlMetadata } from '../form.util';
 
 @Component({
   selector: 'app-form-group',
@@ -19,16 +15,7 @@ import {
 })
 export class FormGroupComponent implements OnInit, OnChanges {
   @Input() formGroup!: FormGroup;
-  controls: {
-    name: string;
-    control: AbstractControl;
-    isFormArray: boolean;
-    asFormArray: FormArray;
-    options?: any[];
-    isCheckbox: boolean;
-    label?: string;
-    hidden?: boolean;
-  }[] = [];
+  controls: FormControlMetadata[] = [];
 
   ngOnInit(): void {
     this.updateControls();
@@ -40,20 +27,8 @@ export class FormGroupComponent implements OnInit, OnChanges {
 
   updateControls(): void {
     this.controls = Object.keys(this.formGroup.controls).map((k) => {
-      const options = getOptions(this.formGroup.controls[k]);
-      const label = getLabel(this.formGroup.controls[k]);
-      const hidden = isHidden(this.formGroup.controls[k]);
-
-      return {
-        name: k,
-        control: this.formGroup.controls[k],
-        isFormArray: this.formGroup.controls[k] instanceof FormArray,
-        asFormArray: this.formGroup.controls[k] as FormArray,
-        options: options,
-        isCheckbox: typeof this.formGroup.controls[k].value === 'boolean',
-        label,
-        hidden,
-      };
+      const metadata = new FormControlMetadata(this.formGroup.controls[k], k);
+      return metadata;
     });
   }
 }

@@ -9,9 +9,14 @@
     </ng-container>
     <ng-template #normalFormControl>
       <ng-container
-        *ngIf="!control.hidden && control.name && control.control.value"
+        *ngIf="
+          !control.hidden &&
+          !control.hiddenFromDisplayOnly &&
+          control.name &&
+          control.control.value
+        "
       >
-        <h3>{{ control.name }}&nbsp;</h3>
+        <h3>{{ control.label ?? control.name }}&nbsp;</h3>
         <p>= {{ control.control.value }}</p>
       </ng-container>
       <app-form-error

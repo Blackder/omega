@@ -16,6 +16,13 @@ import { ComponentPropertyDisplayModule } from '../component-property/component-
     ComponentPropertyDisplayModule,
   ],
   providers: [ComponentResolver],
-  exports: [BlockComponent, ContainerHostDirective],
+  exports: [
+    CommonModule,
+    DragDropModule,
+    MatIconModule,
+    ComponentPropertyDisplayModule,
+    BlockComponent,
+    ContainerHostDirective,
+  ],
 })
-export class ContainerModule {}
+export class BlockModule {}

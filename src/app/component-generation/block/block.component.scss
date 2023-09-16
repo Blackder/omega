@@ -4,35 +4,35 @@ app-block {
   &:not(:last-child) {
     margin-bottom: 2rem;
   }
-  .component {
-    position: relative;
-    display: block;
-    padding: 0.5rem;
-    margin: 1rem 0;
-    background-color: white;
-    box-shadow: 1px 1px 5px 1px black;
-    border-radius: 10px;
-    .header.row {
-      margin-bottom: 0.5rem;
-      align-items: center;
-      gap: 0.5rem;
-      h2 {
-        display: inline-block;
-        margin-right: 2rem;
-        margin-bottom: 0;
-      }
+}
+.component {
+  position: relative;
+  display: block;
+  padding: 0.5rem;
+  margin: 1rem 0;
+  background-color: white;
+  box-shadow: 1px 1px 5px 1px black;
+  border-radius: 10px;
+  .header.row {
+    margin-bottom: 0.5rem;
+    align-items: center;
+    gap: 0.5rem;
+    h2 {
+      display: inline-block;
+      margin-right: 2rem;
+      margin-bottom: 0;
     }
-    .close-icon {
-      position: absolute;
-      right: 1%;
-      top: 2%;
-      cursor: pointer;
-    }
-    &.selected {
-      background-color: $selectedColor;
-    }
-    .drop-zone {
-      min-height: 2rem;
-    }
+  }
+  .close-icon {
+    position: absolute;
+    right: 1%;
+    top: 2%;
+    cursor: pointer;
+  }
+  &.selected {
+    background-color: $selectedColor;
+  }
+  .drop-zone {
+    min-height: 2rem;
   }
 }

@@ -1,5 +1,7 @@
 import { Injectable, Type } from '@angular/core';
 import { BlockComponent } from '../component-generation/block/block.component';
+import { selfClosedElements } from '../constant';
+import { AngularCustomComponentComponent } from '../component-generation/angular-components/angular-custom-component/angular-custom-component.component';
 
 const htmlContainerComponents = [
   'a',
@@ -20,19 +22,38 @@ const htmlContainerComponents = [
 
 @Injectable()
 export class ComponentResolver {
-  private selfClosedElements = ['input', 'img'];
+  constructor(private angularComponentResolver: AngularComponentResolver) {}
 
-  private isHtmlContainerComponent(componentName: string): boolean {
-    return htmlContainerComponents.includes(componentName);
+  resolve(
+    framework: string,
+    componentName: string
+  ): {
+    component: Type<any>;
+    isDropContainer: boolean;
+  } {
+    return framework === 'angular'
+      ? this.angularComponentResolver.resolve(componentName)
+      : {
+          component: BlockComponent,
+          isDropContainer: !selfClosedElements.includes(componentName),
+        };
   }
+}
 
+@Injectable()
+export class AngularComponentResolver {
   resolve(componentName: string): {
     component: Type<any>;
     isDropContainer: boolean;
   } {
-    return {
-      component: BlockComponent,
-      isDropContainer: !this.selfClosedElements.includes(componentName),
-    };
+    return componentName === 'custom-component'
+      ? {
+          component: AngularCustomComponentComponent,
+          isDropContainer: true,
+        }
+      : {
+          component: BlockComponent,
+          isDropContainer: !selfClosedElements.includes(componentName),
+        };
   }
 }

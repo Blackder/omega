@@ -3,13 +3,13 @@ import { ComponentResolver } from '../services/component-resolver.service';
 import { DropData } from '../directives/drag-drop/drop-zone.directive';
 import { DragEffect } from '../directives/drag-drop/drag-drop.enum';
 import { ComponentProperty } from '../component-generation/component-property/component.property';
-import { BuildingBlockComponent } from '../component-generation/building-block.component';
 import { Observable, map, mapTo, merge, of, switchMap, timer } from 'rxjs';
+import { BlockComponent } from '../component-generation/block/block.component';
 
 export class Container<
   TBuildingBlock extends ComponentProperty<TBuildingBlock>
 > {
-  public children: BuildingBlockComponent<TBuildingBlock>[] = [];
+  public children: BlockComponent<TBuildingBlock>[] = [];
   constructor(public viewContainerRef: ViewContainerRef) {}
 
   insert(componentType: Type<unknown>, index?: number): ComponentRef<unknown> {
@@ -20,11 +20,11 @@ export class Container<
       this.children.splice(
         index,
         0,
-        componentRef.instance as BuildingBlockComponent<TBuildingBlock>
+        componentRef.instance as BlockComponent<TBuildingBlock>
       );
     } else {
       this.children.push(
-        componentRef.instance as BuildingBlockComponent<TBuildingBlock>
+        componentRef.instance as BlockComponent<TBuildingBlock>
       );
     }
 
@@ -35,7 +35,7 @@ export class Container<
     toIndex: number,
     toMove: {
       viewRef: ViewRef;
-      component: BuildingBlockComponent<TBuildingBlock>;
+      component: BlockComponent<TBuildingBlock>;
     }
   ): void {
     this.viewContainerRef.move(toMove.viewRef, toIndex);
@@ -44,7 +44,7 @@ export class Container<
 
   remove(hostView: ViewRef): {
     viewRef: ViewRef;
-    component: BuildingBlockComponent<TBuildingBlock>;
+    component: BlockComponent<TBuildingBlock>;
   } {
     const index = this.viewContainerRef.indexOf(hostView as ViewRef);
     const viewRef = this.viewContainerRef.detach(index) as ViewRef;
@@ -94,7 +94,7 @@ function insertComponent<
   framework: string,
   atIndex?: number
 ): void {
-  const componentData = componentResolver.resolve(componentName);
+  const componentData = componentResolver.resolve(framework, componentName);
 
   const componentRef = container.insert(componentData.component, atIndex);
   componentRef.setInput('name', data);

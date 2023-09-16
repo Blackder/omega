@@ -3,41 +3,42 @@
   max-height: 76vh;
   overflow-y: scroll;
   margin: 0;
-}
-.component {
-  list-style-type: none;
-  padding: 1rem;
-  border-radius: 5px;
-  box-shadow: 1px 1px 5px 1px black;
-  position: relative;
-  cursor: pointer;
-  height: fit-content !important;
-  background-color: white;
-  justify-content: space-between;
-  p , mat-icon {
-    flex: 1 1 1rem;
-  }
-  mat-icon {
-    text-align: right;
-  }
-  &::before {
-    content: "";
-    opacity: 0;
-    display: block;
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
+  .block {
+    list-style-type: none;
+    padding: 1rem;
+    border-radius: 5px;
     box-shadow: 1px 1px 5px 1px black;
-    transition: 0.5s ease-out;
-  }
-  &:hover {
-    &::before {
-      opacity: 1;
+    position: relative;
+    cursor: pointer;
+    height: fit-content !important;
+    background-color: white;
+    justify-content: space-between;
+    p,
+    mat-icon {
+      flex: 1 1 1rem;
     }
-  }
-  &:not(:last-child) {
-    margin-bottom: 1rem;
+    mat-icon {
+      text-align: right;
+    }
+    &::before {
+      content: "";
+      opacity: 0;
+      display: block;
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      box-shadow: 1px 1px 5px 1px black;
+      transition: 0.5s ease-out;
+    }
+    &:hover {
+      &::before {
+        opacity: 1;
+      }
+    }
+    &:not(:last-child) {
+      margin-bottom: 1rem;
+    }
   }
 }

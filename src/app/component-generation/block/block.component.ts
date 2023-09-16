@@ -3,6 +3,7 @@ import {
   Component,
   ElementRef,
   Input,
+  OnDestroy,
   OnInit,
   ViewChild,
   ViewContainerRef,
@@ -10,12 +11,11 @@ import {
   ViewRef,
   forwardRef,
 } from '@angular/core';
-import { Container, dropComponent } from 'src/app/mixins/mixins';
+import { Container, Destroyable, dropComponent } from 'src/app/mixins/mixins';
 import { ComponentResolver } from 'src/app/services/component-resolver.service';
 import { ContainerHostDirective } from './container-host.directive';
 import { DropData } from 'src/app/directives/drag-drop/drop-zone.directive';
 import { DragEffect } from 'src/app/directives/drag-drop/drag-drop.enum';
-import { BuildingBlockComponent } from '../building-block.component';
 import { ComponentProperty } from '../component-property/component.property';
 import { ComponentPropertyFactory } from '../component-property/component-property-factory.service';
 import { v4 } from 'uuid';
@@ -23,6 +23,7 @@ import { ComponentPropertyService } from '../component-generation-tab/component-
 import { ContainerBlock } from '../block';
 import { DraggableComponent } from 'src/app/directives/drag-drop/draggable.directive';
 import { FormGroup } from '@angular/forms';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-block',
@@ -31,10 +32,14 @@ import { FormGroup } from '@angular/forms';
   encapsulation: ViewEncapsulation.None,
 })
 export class BlockComponent<
-    TBuildingBlock extends ComponentProperty<TBuildingBlock>
-  >
-  extends BuildingBlockComponent<TBuildingBlock>
-  implements AfterViewInit, DraggableComponent<TBuildingBlock>
+  TBuildingBlock extends ComponentProperty<TBuildingBlock>
+> implements
+    OnInit,
+    AfterViewInit,
+    OnDestroy,
+    Destroyable,
+    ContainerBlock<TBuildingBlock>,
+    DraggableComponent<TBuildingBlock>
 {
   @ViewChild(ContainerHostDirective)
   containerHost!: ContainerHostDirective;
@@ -43,26 +48,42 @@ export class BlockComponent<
   @Input() hostView!: ViewRef;
   @Input() framework!: string;
   @Input() isDropContainer: boolean = true;
+  displayName!: string;
+  protected property!: ComponentProperty<TBuildingBlock>;
+  formGroup!: FormGroup;
+  selected: boolean = false;
+  private destroyed = new Subject<void>();
+  destroyed$ = this.destroyed.asObservable();
   moveEffect = DragEffect.move;
+  id!: string;
 
-  private container!: Container<TBuildingBlock>;
+  container!: Container<TBuildingBlock>;
 
   constructor(
     private componentResolver: ComponentResolver,
     private componentPropertyFactory: ComponentPropertyFactory,
-    componentPropertyService: ComponentPropertyService,
+    private componentPropertyService: ComponentPropertyService,
     public elementRef: ElementRef<HTMLElement>
   ) {
-    super(componentPropertyService);
+    this.id = v4();
   }
 
-  ngAfterViewInit(): void {
-    if (this.isDropContainer) {
-      this.container = new Container(this.containerHost.viewContainerRef);
-    }
+  ngOnInit(): void {
+    this.displayName = this.name;
+    this.property = this.initializeProperty();
+    this.formGroup = this.componentPropertyService.registerComponentProperty(
+      this.id,
+      this.property,
+      this,
+      this.name
+    );
+
+    setTimeout(() => {
+      this.componentPropertyService.onComponentSelected(this);
+    });
   }
 
-  override initializeProperty(): ComponentProperty<TBuildingBlock> {
+  protected initializeProperty(): ComponentProperty<TBuildingBlock> {
     const property = this.componentPropertyFactory.createBuildingBlockProperty(
       this.framework,
       this.name
@@ -71,16 +92,10 @@ export class BlockComponent<
     return property;
   }
 
-  override registerComponentProperty(
-    id: string,
-    property: ComponentProperty<TBuildingBlock>
-  ): FormGroup<any> {
-    return this.componentPropertyService.registerComponentProperty(
-      id,
-      property,
-      this,
-      this.name
-    );
+  ngAfterViewInit(): void {
+    if (this.isDropContainer) {
+      this.container = new Container(this.containerHost.viewContainerRef);
+    }
   }
 
   onDropped(dropData: DropData<TBuildingBlock>): void {
@@ -98,13 +113,26 @@ export class BlockComponent<
     this.componentPropertyService.onComponentRemoved(this);
   }
 
-  override getProperty(): ComponentProperty<TBuildingBlock> {
-    const property = super.getProperty();
+  getProperty(): ComponentProperty<TBuildingBlock> {
+    this.property.copyFrom(this.formGroup.value);
 
-    property.setChildren(
+    this.property.setChildren(
       this.container.children.map((c) => c.getProperty() as TBuildingBlock)
     );
 
-    return property;
+    return this.property;
+  }
+
+  get valid(): boolean {
+    return this.formGroup.valid;
+  }
+
+  select(event: Event): void {
+    event.stopPropagation();
+    this.componentPropertyService.onComponentSelected(this);
+  }
+
+  ngOnDestroy(): void {
+    this.destroyed.next();
   }
 }
