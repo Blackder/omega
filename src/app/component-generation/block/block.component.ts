@@ -116,9 +116,11 @@ export class BlockComponent<
   getProperty(): ComponentProperty<TBuildingBlock> {
     this.property.copyFrom(this.formGroup.value);
 
-    this.property.setChildren(
-      this.container.children.map((c) => c.getProperty() as TBuildingBlock)
-    );
+    if (this.container.children.length > 0) {
+      this.property.setChildren(
+        this.container.children.map((c) => c.getProperty() as TBuildingBlock)
+      );
+    }
 
     return this.property;
   }
