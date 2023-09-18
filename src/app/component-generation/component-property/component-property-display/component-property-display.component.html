@@ -1,0 +1,6 @@
+<ng-container [ngSwitch]="framework">
+  <app-angular-form-group-display
+    *ngSwitchCase="'angular'"
+    [formGroup]="formGroup"
+  ></app-angular-form-group-display>
+</ng-container>

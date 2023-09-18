@@ -1,0 +1,27 @@
+<div
+  class="component"
+  [class.selected]="selected"
+  appDraggable
+  [dragData]="name"
+  [dragEffect]="moveEffect"
+  [component]="this"
+  (click)="select($event)"
+>
+  <mat-icon class="close-icon" (click)="remove($event)">close</mat-icon>
+
+  <div class="row header">
+    <mat-icon color="primary">drag_indicator</mat-icon>
+    <h2>{{ displayName }}</h2>
+  </div>
+
+  <app-component-property-display
+    [framework]="framework"
+    [componentId]="id"
+  ></app-component-property-display>
+  <div *ngIf="isDropContainer" class="drop-zone" appDropZone (dropped)="onDropped($event)">
+    <ng-template appContainerHost></ng-template>
+    <div appDropPlaceholder>
+      <div class="drop-placeholder">Drop here</div>
+    </div>
+  </div>
+</div>

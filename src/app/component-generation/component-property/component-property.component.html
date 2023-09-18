@@ -1,0 +1,6 @@
+<ng-container *ngIf="selectedProperty$ | async as selectedProperty">
+  <h2><span class="selected">{{ selectedProperty.name }}</span> properties</h2>
+  <form [formGroup]="selectedProperty.formGroup">
+    <app-form-group [formGroup]="selectedProperty.formGroup"></app-form-group>
+  </form>
+</ng-container>

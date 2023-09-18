@@ -1,10 +1,16 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { ComponentGenerationScreenComponent } from './component-generation/component-generation-screen/component-generation-screen.component';
 
-const routes: Routes = [];
+const routes: Routes = [
+  {
+    path: '**',
+    component: ComponentGenerationScreenComponent,
+  },
+];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

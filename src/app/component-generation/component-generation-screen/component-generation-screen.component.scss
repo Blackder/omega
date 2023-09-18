@@ -1,0 +1,46 @@
+@import "../../../color.scss";
+
+app-component-generation-screen {
+  .intro {
+    color: $primaryColor;
+    font-size: 2.5em;
+    text-align: center;
+    position: absolute;
+    top: 45%;
+    width: 100%;
+  }
+  img {
+    transform: scale(0.25) scaleX(-1) rotate(139deg);
+    position: absolute;
+    top: 14%;
+    left: 35%;
+    fill: $primaryColor
+  }
+  mat-tab-group {
+    mat-tab-body {
+      padding-top: 1rem;
+      .mat-mdc-tab-body-content {
+        overflow: hidden;
+        .row {
+          align-items: stretch;
+          gap: 2rem;
+          app-component-list {
+            flex: 1 0 5rem;
+          }
+          app-component-generation-panel {
+            flex: 4 0 30rem;
+          }
+          app-component-property {
+            flex: 1 0 11rem;
+          }
+        }
+      }
+    }
+  }
+  .new-component-button {
+    position: absolute;
+    bottom: 2%;
+    right: 2%;
+    z-index: 1;
+  }
+}

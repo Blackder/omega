@@ -1,0 +1,13 @@
+<ul class="component-list">
+  <li
+    class="block row"
+    *ngFor="let component of components"
+    cdkDrag
+    appDraggable
+    [dragData]="component"
+    [dragEffect]="copyEffect"
+  >
+    <p>{{ component }}</p>
+    <mat-icon color="primary">drag_indicator</mat-icon>
+  </li>
+</ul>

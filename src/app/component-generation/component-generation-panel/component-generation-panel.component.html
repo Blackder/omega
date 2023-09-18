@@ -1,0 +1,32 @@
+<div
+  class="component-generation-panel"
+  [class.selected]="selected"
+  (click)="select($event)"
+>
+  <div *ngIf="container && container.children.length === 0">
+    <h2>Drag and drop some blocks here to build your component</h2>
+    <img src="/assets/Curved_Arrow.svg" />
+  </div>
+
+  <h3 *ngIf="!selected">Click this box to see the component's property</h3>
+
+  <app-component-property-display
+    [framework]="framework"
+    [componentId]="id"
+  ></app-component-property-display>
+  <div class="drop-zone" appDropZone (dropped)="onComponentDropped($event)">
+    <ng-template appContainerHost></ng-template>
+    <div appDropPlaceholder>
+      <div class="drop-placeholder">Drop here</div>
+    </div>
+  </div>
+</div>
+<button
+  class="generate-component"
+  mat-raised-button
+  color="primary"
+  [class.shake]="invalidSubmission$ | async"
+  (click)="generate()"
+>
+  Generate component
+</button>
