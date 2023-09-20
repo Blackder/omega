@@ -1,6 +1,6 @@
+import { nameOf } from 'src/app/mixins/mixins';
 import {
   validation,
-  conditionalRequired,
   hidden,
   options,
   required,
@@ -9,6 +9,7 @@ import {
   hiddenFromDisplayOnly,
 } from '../decorators/decorators';
 import { ComponentProperty } from './component.property';
+import { toWords } from 'src/app/pipes/app-pipes/words.pipe';
 
 export enum BindingType {
   innerText = 'innerText',
@@ -42,20 +43,32 @@ export class Output {
     value.type === BindingType.event ||
     (value.to && value.toType) ||
     value.toValue,
+  forFields: [
+    nameOf<Binding>('to'),
+    nameOf<Binding>('toType'),
+    nameOf<Binding>('toValue'),
+  ],
   message:
     'If you provide a field to bind to ("To" value), provide also the type of that field ("To type" value). Otherwise, provide a "To Value"',
+})
+@validation({
+  condition: (value) => value.type === BindingType.innerText || value.from,
+  forFields: [nameOf<Binding>('from')],
+  message: `"${toWords(nameOf<Binding>('from'))}" is required`,
+})
+@validation({
+  condition: (value) =>
+    value.type !== BindingType.innerText ||
+    value.type !== BindingType.event ||
+    value.to,
+  forFields: [nameOf<Binding>('to')],
+  message: `"${toWords(nameOf<Binding>('to'))}" is required`,
 })
 export class Binding {
   @required()
   @options(Object.values(BindingType))
   type: BindingType = BindingType.property;
-  @conditionalRequired((formValue) => formValue.type !== BindingType.innerText)
   from: any = '';
-  @conditionalRequired(
-    (formValue) =>
-      formValue.type === BindingType.innerText ||
-      formValue.type === BindingType.event
-  )
   to?: any = '';
   toType?: string = '';
   toValue?: any = '';

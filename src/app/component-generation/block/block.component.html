@@ -11,6 +11,9 @@
 
   <div class="row header">
     <mat-icon color="primary">drag_indicator</mat-icon>
+    <button mat-icon-button matTooltip="Duplicate this block" (click)="duplicate()">
+      <mat-icon color="primary">file_copy</mat-icon>
+    </button>
     <h2>{{ displayName }}</h2>
   </div>
 
@@ -18,7 +21,12 @@
     [framework]="framework"
     [componentId]="id"
   ></app-component-property-display>
-  <div *ngIf="isDropContainer" class="drop-zone" appDropZone (dropped)="onDropped($event)">
+  <div
+    *ngIf="isDropContainer"
+    class="drop-zone"
+    appDropZone
+    (dropped)="onDropped($event)"
+  >
     <ng-template appContainerHost></ng-template>
     <div appDropPlaceholder>
       <div class="drop-placeholder">Drop here</div>

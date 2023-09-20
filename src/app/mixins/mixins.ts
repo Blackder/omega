@@ -63,13 +63,18 @@ export function dropComponent<
   dropData: DropData<TBuildingBlock>,
   container: Container<TBuildingBlock>,
   componentResolver: ComponentResolver,
-  framework: string
+  framework: string,
+  componentToCopyId?: string,
+  children?: BlockComponent<TBuildingBlock>[]
 ) {
   if (dropData.dragEffect == DragEffect.move) {
+    if (!dropData.component?.parentContainer) {
+      throw new Error('Must provide parent container to move block.');
+    }
     const removed = dropData.component.parentContainer!.remove(
       dropData.component.hostView as ViewRef
     );
-    container.move(dropData.index, removed);
+    container.move(dropData.index as number, removed);
     dropData.component.parentContainer = container;
     dropData.component.hostView = removed.viewRef;
   } else {
@@ -79,7 +84,9 @@ export function dropComponent<
       dropData.data,
       dropData.data,
       framework,
-      dropData.index
+      dropData.index,
+      componentToCopyId,
+      children
     );
   }
 }
@@ -92,7 +99,9 @@ function insertComponent<
   componentName: string,
   data: any,
   framework: string,
-  atIndex?: number
+  atIndex?: number,
+  componentToCopyId?: string,
+  children?: BlockComponent<TBuildingBlock>[]
 ): void {
   const componentData = componentResolver.resolve(framework, componentName);
 
@@ -102,6 +111,8 @@ function insertComponent<
   componentRef.setInput('parentContainer', container);
   componentRef.setInput('hostView', componentRef.hostView);
   componentRef.setInput('framework', framework);
+  componentRef.setInput('componentToCopyId', componentToCopyId);
+  componentRef.setInput('children', children);
 }
 
 /**
@@ -130,3 +141,9 @@ export function toggleFor(displayMs: number) {
 export interface Destroyable {
   destroyed$: Observable<void>;
 }
+
+export function nameOf<T>(key: Extract<keyof T, string>): string {
+  return key;
+}
+
+export type NonEmptyArray<T> = [T, ...T[]];
