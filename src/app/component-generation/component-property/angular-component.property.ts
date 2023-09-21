@@ -1,6 +1,6 @@
+import { nameOf } from 'src/app/mixins/mixins';
 import {
   validation,
-  conditionalRequired,
   hidden,
   options,
   required,
@@ -9,6 +9,7 @@ import {
   hiddenFromDisplayOnly,
 } from '../decorators/decorators';
 import { ComponentProperty } from './component.property';
+import { CustomValidationErrorKey } from './component-property-form/form-error/error.constant';
 
 export enum BindingType {
   innerText = 'innerText',
@@ -38,24 +39,43 @@ export class Output {
 }
 
 @validation({
+  key: CustomValidationErrorKey.bindingToTypeOrToValue,
   condition: (value) =>
     value.type === BindingType.event ||
     (value.to && value.toType) ||
     value.toValue,
-  message:
-    'If you provide a field to bind to ("To" value), provide also the type of that field ("To type" value). Otherwise, provide a "To Value"',
+  forFields: [
+    nameOf<Binding>('to'),
+    nameOf<Binding>('toType'),
+    nameOf<Binding>('toValue'),
+  ],
+})
+@validation({
+  key: CustomValidationErrorKey.bindingFromRequired,
+  condition: (value) => value.type === BindingType.innerText || value.from,
+  forFields: [nameOf<Binding>('from')],
+})
+@validation({
+  key: CustomValidationErrorKey.bindingToRequired,
+  condition: (value) =>
+    (value.type !== BindingType.innerText &&
+      value.type !== BindingType.event) ||
+    value.to,
+  forFields: [nameOf<Binding>('to')],
+})
+@validation({
+  key: CustomValidationErrorKey.bindingToTypeRequired,
+  condition: (value) =>
+    (value.type !== BindingType.innerText &&
+      value.type !== BindingType.event) ||
+    value.toType,
+  forFields: [nameOf<Binding>('toType')],
 })
 export class Binding {
   @required()
   @options(Object.values(BindingType))
   type: BindingType = BindingType.property;
-  @conditionalRequired((formValue) => formValue.type !== BindingType.innerText)
   from: any = '';
-  @conditionalRequired(
-    (formValue) =>
-      formValue.type === BindingType.innerText ||
-      formValue.type === BindingType.event
-  )
   to?: any = '';
   toType?: string = '';
   toValue?: any = '';
@@ -81,6 +101,7 @@ export class AngularBuildingBlockProperty
 
   copyFrom(value: any): void {
     this.name = value.name;
+    this.value = value.value;
     this.attributes = value.attributes;
     this.bindings = value.bindings;
   }

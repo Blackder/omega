@@ -1,15 +1,14 @@
 import {
   AfterViewInit,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   Input,
   OnDestroy,
   OnInit,
   ViewChild,
-  ViewContainerRef,
   ViewEncapsulation,
   ViewRef,
-  forwardRef,
 } from '@angular/core';
 import { Container, Destroyable, dropComponent } from 'src/app/mixins/mixins';
 import { ComponentResolver } from 'src/app/services/component-resolver.service';
@@ -48,6 +47,9 @@ export class BlockComponent<
   @Input() hostView!: ViewRef;
   @Input() framework!: string;
   @Input() isDropContainer: boolean = true;
+  @Input() componentToCopyId?: string;
+  @Input() children?: BlockComponent<TBuildingBlock>[];
+
   displayName!: string;
   protected property!: ComponentProperty<TBuildingBlock>;
   formGroup!: FormGroup;
@@ -63,7 +65,8 @@ export class BlockComponent<
     private componentResolver: ComponentResolver,
     private componentPropertyFactory: ComponentPropertyFactory,
     private componentPropertyService: ComponentPropertyService,
-    public elementRef: ElementRef<HTMLElement>
+    public elementRef: ElementRef<HTMLElement>,
+    private changeDetectorRef: ChangeDetectorRef
   ) {
     this.id = v4();
   }
@@ -71,12 +74,23 @@ export class BlockComponent<
   ngOnInit(): void {
     this.displayName = this.name;
     this.property = this.initializeProperty();
-    this.formGroup = this.componentPropertyService.registerComponentProperty(
-      this.id,
-      this.property,
-      this,
-      this.name
-    );
+
+    if (this.componentToCopyId) {
+      this.formGroup =
+        this.componentPropertyService.registerWithPropertyFromExistingComponent(
+          this.id,
+          this.componentToCopyId,
+          this,
+          this.name
+        );
+    } else {
+      this.formGroup = this.componentPropertyService.registerComponentProperty(
+        this.id,
+        this.property,
+        this,
+        this.name
+      );
+    }
 
     setTimeout(() => {
       this.componentPropertyService.onComponentSelected(this);
@@ -95,6 +109,27 @@ export class BlockComponent<
   ngAfterViewInit(): void {
     if (this.isDropContainer) {
       this.container = new Container(this.containerHost.viewContainerRef);
+    }
+    if (this.children) {
+      for (let i = 0; i < this.children.length; i++) {
+        const child = this.children[i];
+
+        dropComponent(
+          {
+            component: child,
+            data: child.name,
+            dragEffect: DragEffect.copy,
+            index: i,
+          },
+          this.container,
+          this.componentResolver,
+          this.framework,
+          child.id,
+          child.container?.children
+        );
+      }
+
+      this.changeDetectorRef.detectChanges();
     }
   }
 
@@ -116,7 +151,7 @@ export class BlockComponent<
   getProperty(): ComponentProperty<TBuildingBlock> {
     this.property.copyFrom(this.formGroup.value);
 
-    if (this.container.children.length > 0) {
+    if (this.container?.children.length > 0) {
       this.property.setChildren(
         this.container.children.map((c) => c.getProperty() as TBuildingBlock)
       );
@@ -132,6 +167,20 @@ export class BlockComponent<
   select(event: Event): void {
     event.stopPropagation();
     this.componentPropertyService.onComponentSelected(this);
+  }
+
+  duplicate(): void {
+    dropComponent(
+      {
+        data: this.name,
+        dragEffect: DragEffect.copy,
+      },
+      this.parentContainer,
+      this.componentResolver,
+      this.framework,
+      this.id,
+      this.container.children
+    );
   }
 
   ngOnDestroy(): void {

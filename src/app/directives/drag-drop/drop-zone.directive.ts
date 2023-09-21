@@ -19,9 +19,9 @@ export interface DropData<
   TBuildingBlock extends ComponentProperty<TBuildingBlock>
 > {
   data: any;
-  index: number;
+  index?: number;
   dragEffect: DragEffect;
-  component: DraggableComponent<TBuildingBlock>;
+  component?: DraggableComponent<TBuildingBlock>;
 }
 
 @Directive({

@@ -24,6 +24,7 @@ import {
 } from 'src/app/component-generation/decorators/decorators';
 import { Destroyable } from 'src/app/mixins/mixins';
 import { FormControlMetadata } from '../form.util';
+import { FormService } from 'src/app/component-generation/component-generation-tab/form.service';
 
 @Component({
   selector: 'app-form-array',
@@ -43,7 +44,7 @@ export class FormArrayComponent implements OnInit, OnDestroy, Destroyable {
 
   constructor(
     private fb: FormBuilder,
-    private componentPropertyService: ComponentPropertyService,
+    private formService: FormService,
     private changeDetectorRef: ChangeDetectorRef
   ) {}
 
@@ -70,11 +71,9 @@ export class FormArrayComponent implements OnInit, OnDestroy, Destroyable {
       Object.keys(asFormGroup.controls).forEach((k) => {
         const childControl = this.fb.control(asFormGroup.controls[k].value);
 
-        this.componentPropertyService.addValidators(
+        this.formService.addValidators(
           asFormGroup.controls[k],
           childControl,
-          this,
-          formGroup
         );
 
         const options = getOptions(asFormGroup.controls[k]);
@@ -85,15 +84,14 @@ export class FormArrayComponent implements OnInit, OnDestroy, Destroyable {
 
         formGroup.addControl(k, childControl);
       });
-      this.componentPropertyService.addValidators(asFormGroup, formGroup, this);
+      this.formService.addValidators(asFormGroup, formGroup);
       control = formGroup;
     } else {
       control = this.fb.control('');
 
-      this.componentPropertyService.addValidators(
+      this.formService.addValidators(
         this.prototypeItem,
         control,
-        this
       );
     }
 

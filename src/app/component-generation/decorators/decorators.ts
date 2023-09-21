@@ -1,5 +1,6 @@
 import { AbstractControl, FormGroup } from '@angular/forms';
 import 'reflect-metadata';
+import { NonEmptyArray } from 'src/app/mixins/mixins';
 
 const requiredKey = Symbol('required');
 const conditionalRequiredKey = Symbol('conditionalRequired');
@@ -23,28 +24,6 @@ export function isRequired(target: any, propertyKey?: string) {
   return propertyKey
     ? Reflect.getMetadata(requiredKey, target, propertyKey)
     : Reflect.getMetadata(requiredKey, target);
-}
-
-export function conditionalRequired(
-  condition: (parentFormValue: any) => boolean
-) {
-  return Reflect.metadata(conditionalRequiredKey, condition);
-}
-
-export function setAsConditionalRequired(
-  target: any,
-  condition: (parentFormValue: any) => boolean
-) {
-  return Reflect.defineMetadata(conditionalRequiredKey, condition, target);
-}
-
-export function getConditionalRequiredFunction(
-  target: any,
-  propertyKey?: string
-) {
-  return propertyKey
-    ? Reflect.getMetadata(conditionalRequiredKey, target, propertyKey)
-    : Reflect.getMetadata(conditionalRequiredKey, target);
 }
 
 export function ignore() {
@@ -111,19 +90,27 @@ export function getPrototypeControl(target: any, propertyKey?: string) {
 }
 
 export interface Validation {
+  key: string;
   condition: (value: any) => boolean;
-  message: string;
+  forFields: NonEmptyArray<string>;
 }
 
 export function validation(validation: Validation) {
-  return Reflect.metadata(validationKey, validation);
+  return function validationDecorator(target: any) {
+    const existingValidation = Reflect.getMetadata(validationKey, target) ?? [];
+    return Reflect.defineMetadata(
+      validationKey,
+      [...existingValidation, validation],
+      target
+    );
+  };
 }
 
-export function setValidation(target: any, validation: Validation) {
+export function setValidations(target: any, validation: Validation[]) {
   return Reflect.defineMetadata(validationKey, validation, target);
 }
 
-export function getValidation(target: any) {
+export function getValidations(target: any): Validation[] {
   return Reflect.getMetadata(validationKey, target);
 }
 

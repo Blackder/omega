@@ -1,5 +1,4 @@
 <ng-container *ngIf="formGroup">
-  <app-form-error [control]="formGroup"></app-form-error>
   <ng-container *ngFor="let control of controls">
     <ng-container *ngIf="control.isFormArray; else normalFormControl">
       <app-angular-form-array-display
@@ -25,4 +24,5 @@
       ></app-form-error>
     </ng-template>
   </ng-container>
+  <app-form-error [control]="formGroup"></app-form-error>
 </ng-container>
