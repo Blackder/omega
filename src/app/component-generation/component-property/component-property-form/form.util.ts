@@ -16,7 +16,7 @@ import {
   setLabel,
   setOptions,
   setPrototypeControl,
-  setValidation,
+  setValidations,
 } from '../../decorators/decorators';
 import { FormService } from '../../component-generation-tab/form.service';
 
@@ -69,7 +69,7 @@ export class FormControlMetadata {
 
       const validations = getValidations(this.control);
       if (validations) {
-        setValidation(formGroup, validations);
+        setValidations(formGroup, validations);
       }
 
       for (const key in this.asFormGroup.controls) {

@@ -21,30 +21,40 @@ import {
   setOptions,
   setPrototypeControl,
   setRequired,
-  setValidation,
+  setValidations,
   shouldIgnore,
 } from '../decorators/decorators';
-import { ComponentProperty } from '../component-property/component.property';
 
 function validation(validation: Validation): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     const formGroup = control as FormGroup;
     if (!validation.condition(control.value)) {
-      const individualFieldError =
-        validation.forFields.length > 1 ? '' : validation.message;
+      const individualFieldError = validation.forFields.length > 1 ? '' : true;
 
       for (const field of validation.forFields) {
+        const error: { [key: string]: any } = {};
         const fieldControl = formGroup.controls[field];
-        fieldControl.setErrors({ failedCondition: individualFieldError });
-        fieldControl.markAsTouched();
+        error[validation.key] = individualFieldError;
+        fieldControl.setErrors(error);
+        if (control.touched) {
+          fieldControl.markAsTouched();
+        }
       }
-      return { failedCondition: validation.message };
+      const error: { [key: string]: any } = {};
+      error[validation.key] = true;
+      return validation.forFields.length > 1 ? error : null;
     }
 
     for (const field of validation.forFields) {
       const fieldControl = formGroup.controls[field];
-      fieldControl.setErrors(null);
-      fieldControl.markAsTouched();
+      let errors = fieldControl.errors;
+      if (errors) {
+        delete errors[validation.key];
+        if (Object.keys(errors).length === 0) {
+          errors = null;
+        }
+      }
+      fieldControl.setErrors(errors);
     }
     return null;
   };
@@ -148,7 +158,7 @@ export class FormService {
       const validationConfigs = getValidations(target);
 
       if (validationConfigs) {
-        setValidation(prototypeControl, validationConfigs);
+        setValidations(prototypeControl, validationConfigs);
       }
     }
   }

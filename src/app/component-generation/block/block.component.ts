@@ -7,10 +7,8 @@ import {
   OnDestroy,
   OnInit,
   ViewChild,
-  ViewContainerRef,
   ViewEncapsulation,
   ViewRef,
-  forwardRef,
 } from '@angular/core';
 import { Container, Destroyable, dropComponent } from 'src/app/mixins/mixins';
 import { ComponentResolver } from 'src/app/services/component-resolver.service';
@@ -75,15 +73,17 @@ export class BlockComponent<
 
   ngOnInit(): void {
     this.displayName = this.name;
+    this.property = this.initializeProperty();
+
     if (this.componentToCopyId) {
-      this.componentPropertyService.registerWithPropertyFromExistingComponent(
-        this.id,
-        this.componentToCopyId,
-        this,
-        this.name
-      );
+      this.formGroup =
+        this.componentPropertyService.registerWithPropertyFromExistingComponent(
+          this.id,
+          this.componentToCopyId,
+          this,
+          this.name
+        );
     } else {
-      this.property = this.initializeProperty();
       this.formGroup = this.componentPropertyService.registerComponentProperty(
         this.id,
         this.property,
@@ -125,7 +125,7 @@ export class BlockComponent<
           this.componentResolver,
           this.framework,
           child.id,
-          child.container.children
+          child.container?.children
         );
       }
 
@@ -151,7 +151,7 @@ export class BlockComponent<
   getProperty(): ComponentProperty<TBuildingBlock> {
     this.property.copyFrom(this.formGroup.value);
 
-    if (this.container.children.length > 0) {
+    if (this.container?.children.length > 0) {
       this.property.setChildren(
         this.container.children.map((c) => c.getProperty() as TBuildingBlock)
       );

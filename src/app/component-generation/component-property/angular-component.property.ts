@@ -9,7 +9,7 @@ import {
   hiddenFromDisplayOnly,
 } from '../decorators/decorators';
 import { ComponentProperty } from './component.property';
-import { toWords } from 'src/app/pipes/app-pipes/words.pipe';
+import { CustomValidationErrorKey } from './component-property-form/form-error/error.constant';
 
 export enum BindingType {
   innerText = 'innerText',
@@ -39,6 +39,7 @@ export class Output {
 }
 
 @validation({
+  key: CustomValidationErrorKey.bindingToTypeOrToValue,
   condition: (value) =>
     value.type === BindingType.event ||
     (value.to && value.toType) ||
@@ -48,21 +49,27 @@ export class Output {
     nameOf<Binding>('toType'),
     nameOf<Binding>('toValue'),
   ],
-  message:
-    'If you provide a field to bind to ("To" value), provide also the type of that field ("To type" value). Otherwise, provide a "To Value"',
 })
 @validation({
+  key: CustomValidationErrorKey.bindingFromRequired,
   condition: (value) => value.type === BindingType.innerText || value.from,
   forFields: [nameOf<Binding>('from')],
-  message: `"${toWords(nameOf<Binding>('from'))}" is required`,
 })
 @validation({
+  key: CustomValidationErrorKey.bindingToRequired,
   condition: (value) =>
-    value.type !== BindingType.innerText ||
-    value.type !== BindingType.event ||
+    (value.type !== BindingType.innerText &&
+      value.type !== BindingType.event) ||
     value.to,
   forFields: [nameOf<Binding>('to')],
-  message: `"${toWords(nameOf<Binding>('to'))}" is required`,
+})
+@validation({
+  key: CustomValidationErrorKey.bindingToTypeRequired,
+  condition: (value) =>
+    (value.type !== BindingType.innerText &&
+      value.type !== BindingType.event) ||
+    value.toType,
+  forFields: [nameOf<Binding>('toType')],
 })
 export class Binding {
   @required()
@@ -94,6 +101,7 @@ export class AngularBuildingBlockProperty
 
   copyFrom(value: any): void {
     this.name = value.name;
+    this.value = value.value;
     this.attributes = value.attributes;
     this.bindings = value.bindings;
   }

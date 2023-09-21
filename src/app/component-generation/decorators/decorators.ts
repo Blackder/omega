@@ -90,8 +90,8 @@ export function getPrototypeControl(target: any, propertyKey?: string) {
 }
 
 export interface Validation {
+  key: string;
   condition: (value: any) => boolean;
-  message: string;
   forFields: NonEmptyArray<string>;
 }
 
@@ -106,7 +106,7 @@ export function validation(validation: Validation) {
   };
 }
 
-export function setValidation(target: any, validation: Validation[]) {
+export function setValidations(target: any, validation: Validation[]) {
   return Reflect.defineMetadata(validationKey, validation, target);
 }
 

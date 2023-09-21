@@ -2,7 +2,9 @@
   <mat-error *ngIf="control.hasError('required')">
     {{ controlMetadata.label ?? (name | words) }} is required
   </mat-error>
-  <mat-error *ngIf="control.hasError('failedCondition')">
-    {{ control.errors?.['failedCondition'] }}
-  </mat-error>
+  <ng-container *ngFor="let errorKey of customErrorKeys">
+    <mat-error *ngIf="control.hasError(errorKey)">
+      {{ customErrors[errorKey] }}
+    </mat-error>
+  </ng-container>
 </ng-container>
