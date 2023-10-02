@@ -1,6 +1,5 @@
 import { Component, ViewEncapsulation } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Observable, tap } from 'rxjs';
+import { Observable } from 'rxjs';
 import { ComponentGenerationService } from 'src/app/services/api/clients/componentGeneration.service';
 
 @Component({
@@ -16,7 +15,6 @@ export class ComponentGenerationScreenComponent {
 
   constructor(
     componentGenerationService: ComponentGenerationService,
-    fb: FormBuilder
   ) {
     this.frameworksObservable$ = componentGenerationService.getFrameworks();
   }

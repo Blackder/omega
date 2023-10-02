@@ -13,7 +13,7 @@
 
 export interface BindingDto { 
     type: BindingDto.TypeEnum;
-    from: object;
+    from?: object;
     to?: object;
     toType?: string;
     toValue?: object;

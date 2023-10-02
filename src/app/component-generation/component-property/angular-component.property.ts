@@ -66,9 +66,7 @@ export class Output {
 @validation({
   key: CustomValidationErrorKey.bindingToTypeRequired,
   condition: (value) =>
-    (value.type !== BindingType.innerText &&
-      value.type !== BindingType.event) ||
-    value.toType,
+    !value.to || value.type === BindingType.event || value.toType,
   forFields: [nameOf<Binding>('toType')],
 })
 export class Binding {
