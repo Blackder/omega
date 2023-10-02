@@ -13,6 +13,6 @@
 
 export interface AttributeDto { 
     name: string;
-    value: string;
+    value?: string;
 }
 
