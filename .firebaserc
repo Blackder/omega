@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "omega-963f7": {
+      "hosting": {
+        "omega": [
+          "omega-963f7"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "omega-963f7"
+  }
+}
